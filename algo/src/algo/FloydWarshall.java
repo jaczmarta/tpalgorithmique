@@ -47,33 +47,51 @@ public class FloydWarshall {
      * lance l'algorithme de Floyd Warshall
      */
     public void runAlgorithm() {
-
-        //initialisation de delta et P
-        for (int i = 0; i < G.numNodes(); i++) {
-            for (int j = 0; j < G.numNodes(); j++) {
-                if (!G.get(i, j).equals(G.noValue())) {
-                    P[i][j] = i;
-                    delta[i][j] = G.get(i, j);
-                } else {
-                    P[i][j] = INFINITY;
-                    delta[i][j] = INFINITY;
-                }
-            }
-        }
-
+        initDeltaAndP();
+        
         //algorithme
         for (int k = 0; k < G.numNodes(); k++) {
             for (int j = 0; j < G.numNodes(); j++) {
                 for (int i = 0; i < G.numNodes(); i++) {
-                    if (delta[i][k] + delta[k][j] < delta[i][j]) {
-                        P[i][j] = P[k][j];
-                    }
-                    delta[i][j] = min(delta[i][j], delta[i][k], delta[k][j]);
+                	int ij = delta[i][j];
+					int ik = delta[i][k];
+					int kj = delta[k][j];
+                    
+                    if (ij == G.noValue()) {	// s'il n'y a pas de chemin de i a j
+    					if ((ik != G.noValue()) && (kj != G.noValue())) {	// alors s'il existe i->k->j
+    						P[i][j] = k;
+    						delta[i][j] = ik + kj;
+    					}
+    				}
+    				else if ((ik != G.noValue()) && (kj != G.noValue())) { // s'il existe deja un chemin de i a j, et qu'il existe k tel que (i->k->j)
+    					delta[i][j] = min(ij, ik, kj);
+    					if (ij > (ik + kj))
+    						P[i][j] = k;
+    				}
                 }
             }
         }
     }
 
+    public void initDeltaAndP() {
+        for (int i = 0; i < G.numNodes(); i++) {
+            for (int j = 0; j < G.numNodes(); j++) {
+            	if (i == j) {
+            		P[i][j] = i;
+                    delta[i][j] = 0;
+            	}
+            	else if (!G.get(i, j).equals(G.noValue())) {
+                    P[i][j] = i;
+                    delta[i][j] = G.get(i, j);
+                } 
+            	else {
+                    P[i][j] = INFINITY;
+                    delta[i][j] = INFINITY;
+                }
+            }
+        }
+    }
+    
     /**
      * affiche la matrice delta
      */
