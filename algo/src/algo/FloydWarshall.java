@@ -83,19 +83,6 @@ public class FloydWarshall {
             }
         }
 
-
-        //algorithme
-        for (int k = 0; k < G.numNodes(); k++) {
-            for (int j = 0; j < G.numNodes(); j++) {
-                for (int i = 0; i < G.numNodes(); i++) {
-                    if (  min(delta[i][j], delta[i][k], delta[k][j]) != delta[i][j] ) {
-                        P[i][j] = P[k][j];
-                    }
-                    delta[i][j] = min(delta[i][j], delta[i][k], delta[k][j]);
-                }
-            }
-        }
-
     }
     
     /**
@@ -171,8 +158,6 @@ public class FloydWarshall {
         if (i==j) {
             return ""+j;
         }
-        
-       
 
         return getPath(i, P[i][j])+" -> "+j;
         
