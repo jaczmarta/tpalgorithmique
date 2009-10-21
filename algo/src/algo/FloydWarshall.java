@@ -48,29 +48,21 @@ public class FloydWarshall {
      */
     public void runAlgorithm() {
         initDeltaAndP();
-        
+
         //algorithme
         for (int k = 0; k < G.numNodes(); k++) {
             for (int j = 0; j < G.numNodes(); j++) {
                 for (int i = 0; i < G.numNodes(); i++) {
-                	int ij = delta[i][j];
-					int ik = delta[i][k];
-					int kj = delta[k][j];
-                    
-                    if (ij == G.noValue()) {	// s'il n'y a pas de chemin de i a j
-    					if ((ik != G.noValue()) && (kj != G.noValue())) {	// alors s'il existe i->k->j
-    						P[i][j] = k;
-    						delta[i][j] = ik + kj;
-    					}
-    				}
-    				else if ((ik != G.noValue()) && (kj != G.noValue())) { // s'il existe deja un chemin de i a j, et qu'il existe k tel que (i->k->j)
-    					delta[i][j] = min(ij, ik, kj);
-    					if (ij > (ik + kj))
-    						P[i][j] = k;
-    				}
+                    if (  min(delta[i][j], delta[i][k], delta[k][j]) != delta[i][j] ) {
+                        // delta[i][j] >= delta[i][k] + delta[k][j]
+                        // on passe par( min( xxx, yyy ) != xxx ) pour eviter les erreurs avec les infinis...
+                        P[i][j] = P[k][j];
+                    }
+                    delta[i][j] = min(delta[i][j], delta[i][k], delta[k][j]);
                 }
             }
         }
+        
     }
 
     public void initDeltaAndP() {
@@ -85,11 +77,25 @@ public class FloydWarshall {
                     delta[i][j] = G.get(i, j);
                 } 
             	else {
-                    P[i][j] = INFINITY;
+                    P[i][j] = -1;
                     delta[i][j] = INFINITY;
                 }
             }
         }
+
+
+        //algorithme
+        for (int k = 0; k < G.numNodes(); k++) {
+            for (int j = 0; j < G.numNodes(); j++) {
+                for (int i = 0; i < G.numNodes(); i++) {
+                    if (  min(delta[i][j], delta[i][k], delta[k][j]) != delta[i][j] ) {
+                        P[i][j] = P[k][j];
+                    }
+                    delta[i][j] = min(delta[i][j], delta[i][k], delta[k][j]);
+                }
+            }
+        }
+
     }
     
     /**
@@ -116,7 +122,7 @@ public class FloydWarshall {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+            }
     }
 
     /**
@@ -145,6 +151,35 @@ public class FloydWarshall {
             e.printStackTrace();
         }
     }
+
+    public void showPath(int i, int j) {
+
+        try {
+            if ( ( i<0 ) || ( j<0 ) || ( i>=G.numNodes() ) || ( j>=G.numNodes() ) ) {
+                throw new ArrayIndexOutOfBoundsException();
+            }
+        } catch (Exception e ) {
+            e.printStackTrace();
+        }
+        
+        System.out.println( getPath(i, j) );
+        
+    }
+    
+    private String getPath(int i, int j) {
+        
+        if (i==j) {
+            return ""+j;
+        }
+        
+       
+
+        return getPath(i, P[i][j])+" -> "+j;
+        
+        
+    }
+
+
 
     /**
      * retourne le minimum entre a et b+c
