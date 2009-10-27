@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package algo;
 
 /**
@@ -19,15 +15,12 @@ public class OrientedIntValuedGraph extends Graph<Integer> {
         return Integer.MAX_VALUE / 10;
     }
 
-    /**
-     * constructeur par défaut
-     */
     public OrientedIntValuedGraph() {
 
-        value = new Integer[DEFAULT_NUM_NODES][DEFAULT_NUM_NODES];
-        for (int i = 0; i < DEFAULT_NUM_NODES; i++) {
-            for (int j = 0; j < DEFAULT_NUM_NODES; j++) {
-                value[i][j] = noValue();
+        values = new Integer[DEFAULT_NB_VERTICES][DEFAULT_NB_VERTICES];
+        for (int i = 0; i < DEFAULT_NB_VERTICES; i++) {
+            for (int j = 0; j < DEFAULT_NB_VERTICES; j++) {
+                values[i][j] = noValue();
             }
         }
 
@@ -41,13 +34,14 @@ public class OrientedIntValuedGraph extends Graph<Integer> {
 
         //copie en profondeur
 
-        int T = mat.length;
-        this.value = new Integer[T][T];
+        int nbVertices = mat.length;
+        values = new Integer[nbVertices][nbVertices];
 
-        for (int i = 0; i < T; i++) {
-            for (int j = 0; j < T; j++) {
-                this.value[i][j] = mat[i][j];
+        for (int i = 0; i < nbVertices; i++) {
+            for (int j = 0; j < nbVertices; j++) {
+                values[i][j] = mat[i][j];
             }
         }
     }
+
 }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package algo;
 
 /**
@@ -37,9 +33,9 @@ public class FloydWarshall {
      */
     public FloydWarshall(OrientedIntValuedGraph G) {
         this.G = G;
-        int numNodes = G.numNodes();
-        delta = new int[numNodes][numNodes];
-        P = new int[numNodes][numNodes];
+        int size = G.size();
+        delta = new int[size][size];
+        P = new int[size][size];
         INFINITY = OrientedIntValuedGraph.noValue();
     }
 
@@ -50,9 +46,9 @@ public class FloydWarshall {
         initDeltaAndP();
 
         //algorithme
-        for (int k = 0; k < G.numNodes(); k++) {
-            for (int j = 0; j < G.numNodes(); j++) {
-                for (int i = 0; i < G.numNodes(); i++) {
+        for (int k = 0; k < G.size(); k++) {
+            for (int j = 0; j < G.size(); j++) {
+                for (int i = 0; i < G.size(); i++) {
                     if (  min(delta[i][j], delta[i][k], delta[k][j]) != delta[i][j] ) {
                         // delta[i][j] >= delta[i][k] + delta[k][j]
                         // on passe par( min( xxx, yyy ) != xxx ) pour eviter les erreurs avec les infinis...
@@ -66,8 +62,8 @@ public class FloydWarshall {
     }
 
     public void initDeltaAndP() {
-        for (int i = 0; i < G.numNodes(); i++) {
-            for (int j = 0; j < G.numNodes(); j++) {
+        for (int i = 0; i < G.size(); i++) {
+            for (int j = 0; j < G.size(); j++) {
             	if (i == j) {
             		P[i][j] = i;
                     delta[i][j] = 0;
@@ -77,12 +73,11 @@ public class FloydWarshall {
                     delta[i][j] = G.get(i, j);
                 } 
             	else {
-                    P[i][j] = -1;
+                    P[i][j] = INFINITY;
                     delta[i][j] = INFINITY;
                 }
             }
         }
-
     }
     
     /**
@@ -90,11 +85,10 @@ public class FloydWarshall {
      */
     public void showDelta() {
         try {
-
             if (delta == null) {
                 throw new NullPointerException("FloydWarshall::showP : delta==null");
-            } else {
-
+            } 
+            else {
                 String str = "";
                 int T = delta.length;
                 for (int i = 0; i < T; i++) {
@@ -103,11 +97,11 @@ public class FloydWarshall {
                     }
                     str += "\n";
                 }
-
-                System.out.println(str.replace(G.noValue().toString(), "N"));
+                System.out.println(str.replace(G.noValue().toString(), "-"));
             }
 
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             e.printStackTrace();
             }
     }
@@ -120,8 +114,8 @@ public class FloydWarshall {
 
             if (P == null) {
                 throw new NullPointerException("FloydWarshall::showP : P==null");
-            } else {
-
+            } 
+            else {
                 String str = "";
                 int T = P.length;
                 for (int i = 0; i < T; i++) {
@@ -130,38 +124,37 @@ public class FloydWarshall {
                     }
                     str += "\n";
                 }
-
-                System.out.println(str.replace(OrientedIntValuedGraph.noValue().toString(), "N"));
+                System.out.println(str.replace(OrientedIntValuedGraph.noValue().toString(), "-"));
             }
 
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void showPath(int i, int j) {
-
         try {
-            if ( ( i<0 ) || ( j<0 ) || ( i>=G.numNodes() ) || ( j>=G.numNodes() ) ) {
+            if ((i < 0) || (j < 0) || (i >= G.size()) || (j >= G.size())) {
                 throw new ArrayIndexOutOfBoundsException();
             }
-        } catch (Exception e ) {
+        } 
+        catch (Exception e ) {
             e.printStackTrace();
         }
-        
         System.out.println( getPath(i, j) );
-        
     }
     
     private String getPath(int i, int j) {
-        
-        if (i==j) {
+        if (i == j) {
             return ""+j;
         }
-
-        return getPath(i, P[i][j])+" -> "+j;
-        
-        
+        else if (P[i][j] == OrientedIntValuedGraph.noValue()) {
+        	return "Pas de chemin de "+i+" a "+j;
+        }
+        else {
+        	return getPath(i, P[i][j])+" -> "+j;
+        }
     }
 
 
@@ -177,8 +170,17 @@ public class FloydWarshall {
     private int min(int a, int b, int c) {
         if ((b == OrientedIntValuedGraph.noValue()) || (c == OrientedIntValuedGraph.noValue())) {
             return a;
-        } else {
+        } 
+        else {
             return (a < b + c ? a : b + c);
         }
+    }
+    
+    public int[][] getDelta() {
+    	return delta;
+    }
+    
+    public int[][] getP() {
+    	return delta;
     }
 }

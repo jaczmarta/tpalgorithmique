@@ -1,55 +1,43 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package algo;
 
+import java.util.Random;
+
 /**
- * représente un graphe quelconque (valué ou non, arcs labellisés par des objets Value)
+ * représente un graphe quelconque (valué ou non, arcs labellisés par des objets Type)
  * @author remi
  */
-public abstract class Graph<Value> {
 
-    //Nombre par défaut de sommets (constructeur par défaut)
-    public static final int DEFAULT_NUM_NODES = 1000;
+public abstract class Graph<Type> {
 
-    //matrice des labels des arcs
-    protected Value[][] value;
+    public static final int DEFAULT_NB_VERTICES = 1000; //Nombre par défaut de sommets
+    protected Type[][] values; //matrice des labels des arcs
 
     /**
-     * représente l'abscence de valeur
-     * @return la représentation formelle de l'abscence de valeur
-     */
-    public static Object noValue() {
-        return null;
-    }
-
-    /**
-     * constructeur par défaut
+     * Constructeur sans paramètre
      */
     public Graph() {
-        value = (Value[][]) new Object[DEFAULT_NUM_NODES][DEFAULT_NUM_NODES];
-        for (int i = 0; i < DEFAULT_NUM_NODES; i++) {
-            for (int j = 0; j < DEFAULT_NUM_NODES; j++) {
-                value[i][j] = (Value) noValue();
+        values = (Type[][]) new Object[DEFAULT_NB_VERTICES][DEFAULT_NB_VERTICES];
+        for (int i = 0; i < DEFAULT_NB_VERTICES; i++) {
+            for (int j = 0; j < DEFAULT_NB_VERTICES; j++) {
+                values[i][j] = (Type) noValue();
             }
         }
     }
 
     /**
-     * constructeur par valeur;
+     * Constructeur par valeur;
      * @param adj la matrice d'adjacence du graphe (matrice des labels des arcs)
      */
-    public Graph(Value[][] value) {
+    public Graph(Type[][] values) {
 
         //copie en profondeur
 
-        int T = value.length;
-        this.value = (Value[][]) new Object[T][T];
+        int size = values.length;
+        this.values = (Type[][]) new Object[size][size];
 
-        for (int i = 0; i < T; i++) {
-            for (int j = 0; j < T; j++) {
-                this.value[i][j] = value[i][j];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                this.values[i][j] = values[i][j];
             }
         }
     }
@@ -60,14 +48,16 @@ public abstract class Graph<Value> {
      * @param j sommet d'arrivée
      * @return le label de l'arc (i, j)
      */
-    public Value get(int i, int j) {
+    public Type get(int i, int j) {
         try {
-            if ((i < 0) || (j < 0) || (i >= value.length) || (j >= value.length)) {
+            if ((i < 0) || (j < 0) || (i >= values.length) || (j >= values.length)) {
                 throw new ArrayIndexOutOfBoundsException("Graph::get : (" + i + ", " + j + ")");
-            } else {
-                return value[i][j];
+            } 
+            else {
+                return values[i][j];
             }
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -79,14 +69,16 @@ public abstract class Graph<Value> {
      * @param j le sommet d'arrivée
      * @param v le nouveau label de l'arc (i, j)
      */
-    public void set(int i, int j, Value v) {
+    public void set(int i, int j, Type v) {
         try {
-            if ((i < 0) || (j < 0) || (i >= value.length) || (j >= value.length)) {
+            if ((i < 0) || (j < 0) || (i >= values.length) || (j >= values.length)) {
                 throw new ArrayIndexOutOfBoundsException("Graph::set : (" + i + ", " + j + ")");
-            } else {
-                value[i][j] = v;
+            } 
+            else {
+                values[i][j] = v;
             }
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -95,7 +87,23 @@ public abstract class Graph<Value> {
      * le nombre de sommets
      * @return le nombre de sommets
      */
-    protected int numNodes() {
-        return value.length;
+    protected int size() {
+        return values.length;
+    }
+    
+
+    /**
+     * représente l'abscence de valeur
+     * @return la représentation formelle de l'abscence de valeur
+     */
+    public static Object noValue() {
+        return null;
+    }
+
+	/**
+	 * @return un entier comprit entre min et max
+	 */
+    public int generateInteger(int min, int max) {
+    	return (int)Math.floor(Math.random()*(max-min+1))+min;
     }
 }
