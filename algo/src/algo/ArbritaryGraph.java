@@ -28,7 +28,7 @@ public class ArbritaryGraph extends Graph<int[]> {
      * @return la valeur formelle de l'infini/pas de valeur
      */
     public static Integer noValue() {
-        return Integer.MAX_VALUE / 10;
+        return OrientedIntValuedGraph.noValue();
     }
     
     public ArbritaryGraph() {
@@ -134,23 +134,27 @@ public class ArbritaryGraph extends Graph<int[]> {
 		for (int i = 0; i < size(); i++) {
 			for (int j = 0; j < size(); j++) {
 				try {
-					if (!((Integer)getParamAt(i, j, numParamStream)).equals(noValue())) {
 						
-						stream 		= getParamAt(i, j, numParamStream);
-						cost 		= getParamAt(i, j, numParamCost);
-						capacity	= getParamAt(i, j, numParamCapacity);
-						
-						Ge.setParamAt	(j, i, numParamStream, 		stream);
-						Ge.setParamAt	(j, i, numParamCost, 		cost);
-						Ge.setParamAt	(j, i, numParamCapacity, 	capacity);
-						
-						if (getParamAt(i, j, numParamStream) < getParamAt(i, j, numParamCapacity)) { //arc non saturé
-							
+					stream 		= getParamAt(i, j, numParamStream);
+					cost 		= getParamAt(i, j, numParamCost);
+					capacity	= getParamAt(i, j, numParamCapacity);
+					
+					Ge.setParamAt	(j, i, numParamStream, 		stream);
+					Ge.setParamAt	(j, i, numParamCost, 		cost);
+					Ge.setParamAt	(j, i, numParamCapacity, 	capacity);
+					
+					if (getParamAt(i, j, numParamStream) < getParamAt(i, j, numParamCapacity)) { //arc non saturé
+
+						if (!((Integer)getParamAt(i, j, numParamCapacity)).equals(noValue())) {
 							Ge.setParamAt	(i, j, numParamStream, 		capacity - stream);
-							Ge.setParamAt	(i, j, numParamCost, 		cost);
-							Ge.setParamAt	(i, j, numParamCapacity, 	capacity);
 						}
+						else {
+							Ge.setParamAt	(i, j, numParamStream, noValue());
+						}
+						Ge.setParamAt	(i, j, numParamCost, 		cost);
+						Ge.setParamAt	(i, j, numParamCapacity, 	capacity);
 					}
+					
 				}
 				catch (Exception e) {
 					e.printStackTrace();
@@ -242,25 +246,28 @@ public class ArbritaryGraph extends Graph<int[]> {
     	FloydWarshall tmpFloyd = new FloydWarshall(oivGraph);
     	tmpFloyd.runAlgorithm();
     	int[][] tmpDelta = tmpFloyd.getDelta();
+    	int tmpSource = source;
     	
-    	while (tmpDelta[source][target] == noValue()) {
+    	while (tmpDelta[source][target] == FloydWarshall.INFINITY) {
 
-    		int k = new Random().nextInt(tmpDelta.length);
-    		if (tmpDelta[source][k] == noValue()) {
-    			
+    		int k = generateInteger(0, tmpDelta.length - 1);
+    		if (tmpDelta[tmpSource][k] == OrientedIntValuedGraph.noValue()) {
+
     			int tmpCost = generateInteger(minCost, maxCost);
     			int tmpCapacity = generateInteger(minCapacity, maxCapacity);
 
-    			oivGraph.set(source, k, tmpCapacity);
+    			oivGraph.set(tmpSource, k, tmpCost);
     			tmpFloyd = new FloydWarshall(oivGraph);
+    			tmpFloyd.runAlgorithm();
     			tmpDelta = tmpFloyd.getDelta();
-    			
-    			values[source][k][0] = tmpCost;
-    			values[source][k][1] = tmpCapacity;
-    			generatePath(source, k, minCost, maxCost, minCapacity, maxCapacity);
-    			generatePath(k, target, minCost, maxCost, minCapacity, maxCapacity);
+
+    			values[tmpSource][k][0] = tmpCost;
+    			values[tmpSource][k][1] = tmpCapacity;
+
+    			tmpSource = k;
     		}
     	}
+    	//tmpFloyd.showPath(source, target);
     }
     
     /**
@@ -305,5 +312,12 @@ public class ArbritaryGraph extends Graph<int[]> {
     		}
     	}
     	return new OrientedIntValuedGraph(tmpMatrix);
+    }
+    
+    public void showPath(int i, int j) {
+    	OrientedIntValuedGraph oivGraph = getOrientedIntValuedGraphBy(0);
+    	FloydWarshall tmpFloyd = new FloydWarshall(oivGraph);
+    	tmpFloyd.runAlgorithm();
+    	tmpFloyd.showPath(i, j);
     }
 }
