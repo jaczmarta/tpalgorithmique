@@ -54,11 +54,11 @@ public class Main {
                 /* e */ {{N, N, N}, {N, N, N}, {N, N, N}, {N, N, N}, {N, N, N}}};
 
         //on créé le graphe
-        ArbritaryGraph G2 = new ArbritaryGraph(mat2, 1);
+        ArbritaryGraph G2 = new ArbritaryGraph(mat2, 3);
                 
         //Affichage du graphe d'écart
         //G2.generateDistanceGraph().show();
-        G2.generatePath(4, 0, 1, 10);
+        G2.generatePath(4, 0, 1, 10, 5, 15);
 
         System.out.println("-----------------------------CHEMIN GENERE---------------------------------");
         G2.show();
@@ -73,7 +73,15 @@ public class Main {
         fw2.showP();
         
         System.out.println("-----------------------------GRAPHE D'ECART---------------------------------");
-        G2.generateDistanceGraph().show();
+        G2.generateDistanceGraph(0,1,2).show();
         fw2.showPath(4, 0);
+        
+        System.out.println("-----------------------------GRAPHE ALEATOIRE---------------------------------");
+        G2 = new ArbritaryGraph(15, 2);
+        G2.generateRandomGraph(0, 14, 1, 10, 5, 15).show(); //chemin de 0 a 14; 0<cout<11; 4<capacite<16
+        
+        fw2 = new FloydWarshall(G2.getOrientedIntValuedGraphBy(0));
+        fw2.runAlgorithm();
+        fw2.showPath(0, 14);
     }
 }

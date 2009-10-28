@@ -126,16 +126,34 @@ public class ArbritaryGraph extends Graph<int[]> {
      * 		- getParamAt(i, j, 0) retourne le flot de l'arc (i,j)
      * 		- getParamAt(i, j, 1) retourne la capacité de l'arc (i, j)
      */
-    public ArbritaryGraph generateDistanceGraph() {
+    public ArbritaryGraph generateDistanceGraph(int numParamStream, int numParamCapacity, int numParamCost) {
     	ArbritaryGraph Ge = new ArbritaryGraph(this.values.length, nbParams);
+    	int stream;
+		int cost;
+		int capacity;
 		for (int i = 0; i < size(); i++) {
 			for (int j = 0; j < size(); j++) {
-				if (!((Integer)getParamAt(i, j, 0)).equals(noValue())) {
-					Ge.setParamAt	(j, i, 0, getParamAt(i, j, 0));
-					
-					if (getParamAt(i, j, 0) < getParamAt(i, j, 1)) { //arc non saturé			
-						Ge.setParamAt	(i, j, 0, getParamAt(i, j, 1) - getParamAt(i, j, 0));
+				try {
+					if (!((Integer)getParamAt(i, j, numParamStream)).equals(noValue())) {
+						
+						stream 		= getParamAt(i, j, numParamStream);
+						cost 		= getParamAt(i, j, numParamCost);
+						capacity	= getParamAt(i, j, numParamCapacity);
+						
+						Ge.setParamAt	(j, i, numParamStream, 		stream);
+						Ge.setParamAt	(j, i, numParamCost, 		cost);
+						Ge.setParamAt	(j, i, numParamCapacity, 	capacity);
+						
+						if (getParamAt(i, j, numParamStream) < getParamAt(i, j, numParamCapacity)) { //arc non saturé
+							
+							Ge.setParamAt	(i, j, numParamStream, 		capacity - stream);
+							Ge.setParamAt	(i, j, numParamCost, 		cost);
+							Ge.setParamAt	(i, j, numParamCapacity, 	capacity);
+						}
 					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
 				}
 			}					
 		}
@@ -219,9 +237,9 @@ public class ArbritaryGraph extends Graph<int[]> {
      * @param max la valeur max d'un arcs
      * @return un graphe orienté valué comportant un chemin de source a target
      */
-    public OrientedIntValuedGraph generatePath(int source, int target, int min, int max) {
-    	OrientedIntValuedGraph result = getOrientedIntValuedGraphBy(0);
-    	FloydWarshall tmpFloyd = new FloydWarshall(result);
+    public void generatePath(int source, int target, int minCost, int maxCost, int minCapacity, int maxCapacity) {
+    	OrientedIntValuedGraph oivGraph = getOrientedIntValuedGraphBy(0);
+    	FloydWarshall tmpFloyd = new FloydWarshall(oivGraph);
     	tmpFloyd.runAlgorithm();
     	int[][] tmpDelta = tmpFloyd.getDelta();
     	
@@ -230,19 +248,48 @@ public class ArbritaryGraph extends Graph<int[]> {
     		int k = new Random().nextInt(tmpDelta.length);
     		if (tmpDelta[source][k] == noValue()) {
     			
-    			int tmpVal = generateInteger(min, max);
+    			int tmpCost = generateInteger(minCost, maxCost);
+    			int tmpCapacity = generateInteger(minCapacity, maxCapacity);
 
-    			result.set(source, k, tmpVal);
-    			tmpFloyd = new FloydWarshall(result);
+    			oivGraph.set(source, k, tmpCapacity);
+    			tmpFloyd = new FloydWarshall(oivGraph);
     			tmpDelta = tmpFloyd.getDelta();
     			
-    			values[source][k][0] = tmpVal;
-    			
-    			generatePath(source, k, min, max);
-    			generatePath(k, target, min, max);
+    			values[source][k][0] = tmpCost;
+    			values[source][k][1] = tmpCapacity;
+    			generatePath(source, k, minCost, maxCost, minCapacity, maxCapacity);
+    			generatePath(k, target, minCost, maxCost, minCapacity, maxCapacity);
     		}
     	}
-    	return result;
+    }
+    
+    /**
+     * 
+     * @param source
+     * @param target
+     * @param min
+     * @param max
+     * @return
+     */
+    public ArbritaryGraph generateRandomGraph(int source, int target, int minCost, int maxCost, int minCapacity, int maxCapacity) {
+    	generatePath(source, target, minCost, maxCost, minCapacity, maxCapacity);
+    	int edgesToAdd = generateInteger(0, this.size());
+		int tmpSource = generateInteger(0, this.size()-1);
+		int tmpTarget = generateInteger(0, this.size()-1);
+    	for (int i = 0; i< edgesToAdd; i++) {
+    		while (values[tmpSource][tmpTarget][0] != noValue()) {
+    			tmpSource = generateInteger(0, this.size()-1);
+    			tmpTarget = generateInteger(0, this.size()-1);
+    		}
+    		
+			int tmpCost = generateInteger(minCost, maxCost);
+			int tmpCapacity = generateInteger(minCapacity, maxCapacity);
+			
+			values[tmpSource][tmpTarget][0] = tmpCost;
+			values[tmpSource][tmpTarget][1] = tmpCapacity;
+    	}
+    	return this;
+    	
     }
     
     /**
