@@ -15,7 +15,7 @@ public class Main {
         System.out.println("*************************************************************************");
 
         //matrice du sujet du tp
-        Integer N = OrientedIntValuedGraph.noValue();
+        Integer N = BasicOrientedGraph.noValue();
 
         
         int[][] mat = {
@@ -28,7 +28,7 @@ public class Main {
 
 
         //on créé le graphe
-        OrientedIntValuedGraph G1 = new OrientedIntValuedGraph(mat);
+        BasicOrientedGraph G1 = new BasicOrientedGraph(mat);
 
         //on créé une instance de l'algo de Floyd Warshall
         FloydWarshall fw = new FloydWarshall(G1);
@@ -77,11 +77,12 @@ public class Main {
         fw2.showPath(4, 0);
         
         System.out.println("-----------------------------GRAPHE ALEATOIRE---------------------------------");
-        G2 = new ArbritaryGraph(15, 2);
-        G2.generateRandomGraph(0, 14, 1, 10, 5, 15).show(); //chemin de 0 a 14; 0<cout<11; 4<capacite<16
-        
-        fw2 = new FloydWarshall(G2.getOrientedIntValuedGraphBy(0));
-        fw2.runAlgorithm();
-        fw2.showPath(0, 14);
+
+        RandomGraphBuilder builder = new RandomGraphBuilder();
+        builder.setNumVertices(4);
+        builder.setDensity(0.3);
+        builder.setCapacityBound(5);
+        builder.setCostBound(1);
+        builder.generateRandomFlowGraph().show();
     }
 }
