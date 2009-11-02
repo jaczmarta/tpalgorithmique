@@ -15,7 +15,7 @@ public class FloydWarshall {
     //matrice du routage :
     //P[i][j] contient le sommet précédent j sur un plus court chemin de i à j
     private int[][] P;
-    OrientedIntValuedGraph G;
+    BasicOrientedGraph G;
 
     /**
      * constructeur par défaut
@@ -23,20 +23,20 @@ public class FloydWarshall {
     public FloydWarshall() {
         delta = new int[0][0];
         P = new int[0][0];
-        G = new OrientedIntValuedGraph();
-        INFINITY = OrientedIntValuedGraph.noValue();
+        G = new BasicOrientedGraph();
+        INFINITY = BasicOrientedGraph.noValue();
     }
 
     /**
      * constructeur par valeur
      * @param G un graphe orienté valué par des entiers
      */
-    public FloydWarshall(OrientedIntValuedGraph G) {
+    public FloydWarshall(BasicOrientedGraph G) {
         this.G = G;
         int size = G.size();
         delta = new int[size][size];
         P = new int[size][size];
-        INFINITY = OrientedIntValuedGraph.noValue();
+        INFINITY = BasicOrientedGraph.noValue();
     }
 
     /**
@@ -124,7 +124,7 @@ public class FloydWarshall {
                     }
                     str += "\n";
                 }
-                System.out.println(str.replace(OrientedIntValuedGraph.noValue().toString(), "-"));
+                System.out.println(str.replace(BasicOrientedGraph.noValue().toString(), "-"));
             }
 
         } 
@@ -149,7 +149,7 @@ public class FloydWarshall {
         if (i == j) {
             return ""+j;
         }
-        else if (P[i][j] == OrientedIntValuedGraph.noValue()) {
+        else if (P[i][j] == BasicOrientedGraph.noValue()) {
         	return "Pas de chemin de "+i+" a "+j;
         }
         else {
@@ -168,7 +168,7 @@ public class FloydWarshall {
      * @return min (a, b+c)
      */
     private int min(int a, int b, int c) {
-        if ((b == OrientedIntValuedGraph.noValue()) || (c == OrientedIntValuedGraph.noValue())) {
+        if ((b == BasicOrientedGraph.noValue()) || (c == BasicOrientedGraph.noValue())) {
             return a;
         } 
         else {
