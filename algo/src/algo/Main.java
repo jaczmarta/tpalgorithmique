@@ -79,10 +79,10 @@ public class Main {
         System.out.println("-----------------------------GRAPHE ALEATOIRE---------------------------------");
 
         RandomGraphBuilder builder = new RandomGraphBuilder();
-        builder.setNumVertices(4);
+        builder.setNumVertices(1000);
         builder.setDensity(0.3);
         builder.setCapacityBound(5);
         builder.setCostBound(1);
-        builder.generateRandomFlowGraph().show();
+        builder.generateRandomFlowGraph();
     }
 }
