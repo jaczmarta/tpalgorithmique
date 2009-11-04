@@ -36,7 +36,7 @@ public class RandomGraphBuilder
         {
             for (int j = 0; j < numVertices; j++)
             {
-                values[i][j] = FlowGraph.noValue();
+                values[i][j] = FlowValues.noValue();
             }
         }
 

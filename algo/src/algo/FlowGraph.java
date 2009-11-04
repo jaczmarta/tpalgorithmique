@@ -98,6 +98,57 @@ public class FlowGraph extends Graph<FlowValues>
         this.get(i, j).setCost(cost);
     }
 
+    /**
+     * calcule et retourne le graphe d'écart du graphe courant
+     * @return le graphe d'écart du graphe courant
+     */
+    public CostGraph getResultingNetwork()
+    {
+
+        CostValues[][] resultingNetwork = new CostValues[this.values.length][this.values.length];
+
+        for (int i = 0; i < this.values.length; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+
+                if (!FlowValues.noValue().equals(values[i][j]))
+                {
+
+                    int xij = getFlow(i, j);
+                    int cij = getCapacity(i, j);
+
+                    if (xij < cij)
+                    {
+                        resultingNetwork[i][j] = new CostValues(cij - xij);
+                    } else
+                    {
+                        resultingNetwork[i][j] = CostValues.noValue();
+                    }
+
+                    if (xij > 0)
+                    {
+                        resultingNetwork[j][i] = new CostValues(xij);
+                    } else
+                    {
+                        resultingNetwork[j][i] = CostValues.noValue();
+                    }
+
+                } else
+                {
+                    resultingNetwork[i][j] = CostValues.noValue();
+                }
+
+            }
+        }
+
+        CostGraph Ge = new CostGraph(resultingNetwork);
+        return Ge;
+    }
+
+    /**
+     * affiche le graphe
+     */
     public void show()
     {
         try
@@ -134,10 +185,5 @@ public class FlowGraph extends Graph<FlowValues>
         {
             e.printStackTrace();
         }
-    }
-
-    public static FlowValues noValue()
-    {
-        return new FlowValues(-1, -1, -1);
     }
 }

@@ -130,4 +130,13 @@ public class FlowValues
         return true;
 
     }
+
+    /**
+     * abscence de valeur
+     * @return flot, capacité, cout à -1
+     */
+    public static FlowValues noValue()
+    {
+        return new FlowValues(-1, -1, -1);
+    }
 }
