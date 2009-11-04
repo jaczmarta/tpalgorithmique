@@ -4,6 +4,9 @@
  */
 package algo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Rémi
@@ -42,13 +45,22 @@ public class RandomGraphBuilder
         {
             int numEdgesForThisPath = generateInteger(0, getNumVertices() - 1);
             int i = indexOfSource();
+
+            //liste de chemins aléatoires pour le chemin entre s et t
+            List<Integer> randomVertices = new ArrayList<Integer>();
+            randomVertices.add(indexOfSource());
+            for (int k = 0; k < numEdgesForThisPath; k++)
+            {
+                randomVertices.add(generateInteger(0, getNumVertices() - 1));
+            }
+
             while (i < numEdgesForThisPath)
             {
-                values[i][i + 1] = getRandomValues();
+                values[randomVertices.get(i)][randomVertices.get(i + 1)] = getRandomValues();
                 i++;
                 edgesCounter++;
             }
-            values[i][indexOfSink()] = getRandomValues();
+            values[randomVertices.get(i)][indexOfSink()] = getRandomValues();
             edgesCounter++;
         }
         //création des derniers arcs
@@ -81,8 +93,8 @@ public class RandomGraphBuilder
     private FlowValues getRandomValues()
     {
         int flow = 0;
-        int capacity = generateInteger(0, getCapacityBound());
-        int cost = generateInteger(0, getCostBound());
+        int capacity = generateInteger(1, getCapacityBound());
+        int cost = generateInteger(1, getCostBound());
 
         return new FlowValues(flow, capacity, cost);
 
