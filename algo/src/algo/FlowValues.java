@@ -8,7 +8,7 @@ package algo;
  * représente la valeur d'un arc dans un graphe représentant un problème de flots
  * @author Rémi
  */
-public class FlowValues
+public class FlowValues extends AbstractValues
 {
 
     private int flow;
@@ -100,13 +100,20 @@ public class FlowValues
     /**
      * toString
      */
+    @Override
     public String toString()
     {
-        return getFlow() + "/" + getCapacity() + "/" + getCost();
+        if (equals(noValue())) {
+            return "-/-/-";
+        } else {
+            return getFlow() + "/" + getCapacity() + "/" + getCost();
+        }
     }
 
     /**
      * equals
+     * @param flowValues paramètre à comparer
+     * @return faux si le paramètre est null ou si l'un des paramètre de l'arc est différent de celui de this
      */
     public boolean equals(FlowValues flowValues)
     {

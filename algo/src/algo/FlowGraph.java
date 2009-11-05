@@ -5,10 +5,10 @@
 package algo;
 
 /**
- *
+ * Représente un graphe pour les problèmes de flots
  * @author Rémi
  */
-public class FlowGraph extends Graph<FlowValues>
+public class FlowGraph extends AbstractGraph<FlowValues>
 {
 
     /**
@@ -18,6 +18,36 @@ public class FlowGraph extends Graph<FlowValues>
     public FlowGraph(FlowValues[][] flowValues)
     {
         super(flowValues);
+    }
+
+    /**
+     * constructeur par spécification de la taille du graphe
+     * @param size
+     */
+    public FlowGraph(int size)
+    {
+        super(size);
+    }
+
+    /**
+     * représente l'abscence de valeur d'un arc dans ce graphe
+     * @return l'objet représentant l'abscence de valeur d'un arc
+     */
+    public FlowValues noValue()
+    {
+        return FlowValues.noValue();
+    }
+
+    /**
+     * retourne la valeur d'un arc (i, j)
+     * @param i point d'entrée de l'arc
+     * @param j point de sortie de l'arc
+     * @return le label de l'arc (i, j)
+     */
+    @Override
+    public FlowValues get(int i, int j)
+    {
+        return (FlowValues) values[i][j];
     }
 
     /**
@@ -46,7 +76,7 @@ public class FlowGraph extends Graph<FlowValues>
     }
 
     /**
-     * getCost
+     * getValue
      * accesseur du cout de l'arc (i, j)
      * @param i point d'entree de l'arc
      * @param j point de sortie de l'arc
@@ -84,7 +114,7 @@ public class FlowGraph extends Graph<FlowValues>
     }
 
     /**
-     * setCost
+     * setValue
      * mutateur du cout de l'arc (i, j)
      * @param i point d'entree de l'arc
      * @param j point de sortie de l'arc
@@ -99,20 +129,46 @@ public class FlowGraph extends Graph<FlowValues>
     }
 
     /**
+     * mutateur pour un arc
+     * @param i point d'entrée de l'arc
+     * @param j point de sortie de l'arc
+     * @param flowValues le label de l'arc
+     */
+    @Override
+    public void set(int i, int j, FlowValues flowValues)
+    {
+        setFlow(i, j, flowValues.getFlow());
+        setCapacity(i, j, flowValues.getCapacity());
+        setCost(i, j, flowValues.getCost());
+    }
+
+    /**
+     * mutateur pour un arc par tous les parametre
+     * @param i point d'entree de l'arc
+     * @param j point de sortie de l'arc
+     * @param flow flot de l'arc
+     * @param capacity capacite de l'arc
+     * @param cost cout de l'arc
+     */
+    public void set(int i, int j, int flow, int capacity, int cost) {
+
+    }
+
+    /**
      * calcule et retourne le graphe d'écart du graphe courant
      * @return le graphe d'écart du graphe courant
      */
-    public CostGraph getResultingNetwork()
+    public OrientedValuedGraph getResultingNetwork()
     {
 
-        CostValues[][] resultingNetwork = new CostValues[this.values.length][this.values.length];
+        OrientedValuedGraph Ge = new OrientedValuedGraph(size());
 
-        for (int i = 0; i < this.values.length; i++)
+        for (int i = 0; i < size(); i++)
         {
-            for (int j = 0; j < i; j++)
+            for (int j = 0; j < size(); j++)
             {
 
-                if (!FlowValues.noValue().equals(values[i][j]))
+                if (exists(i, j))
                 {
 
                     int xij = getFlow(i, j);
@@ -120,70 +176,17 @@ public class FlowGraph extends Graph<FlowValues>
 
                     if (xij < cij)
                     {
-                        resultingNetwork[i][j] = new CostValues(cij - xij);
-                    } else
-                    {
-                        resultingNetwork[i][j] = CostValues.noValue();
+                        Ge.setValue(i, j, cij - xij);
                     }
 
                     if (xij > 0)
                     {
-                        resultingNetwork[j][i] = new CostValues(xij);
-                    } else
-                    {
-                        resultingNetwork[j][i] = CostValues.noValue();
+                        Ge.setValue(j, i, xij);
                     }
-
-                } else
-                {
-                    resultingNetwork[i][j] = CostValues.noValue();
                 }
-
             }
         }
 
-        CostGraph Ge = new CostGraph(resultingNetwork);
         return Ge;
-    }
-
-    /**
-     * affiche le graphe
-     */
-    public void show()
-    {
-        try
-        {
-            if (values == null)
-            {
-                throw new NullPointerException("ArbritaryGraph::show : values==null");
-            } else
-            {
-                String str = "";
-
-                int T = ((Object[][]) values).length;
-
-                for (int i = 0; i < T; i++)
-                {
-                    for (int j = 0; j < T; j++)
-                    {
-                        if (noValue().equals(get(i, j)))
-                        {
-                            str += noValue().toString();
-                        } else
-                        {
-                            str += get(i, j).toString();
-                        }
-                        str += "\t";
-                    }
-                    str += "\n";
-                }
-                System.out.println(str.replace(noValue().toString(), "-/-/-"));
-            }
-
-
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 }

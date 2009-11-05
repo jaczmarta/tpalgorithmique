@@ -8,13 +8,13 @@ public class FloydWarshall
 {
 
     //représente une distance infinie
-    public int INFINITY;
+    public static int INFINITY;
     //matrice delta des chemins les plus courts
     private int[][] delta;
     //matrice du routage :
     //P[i][j] contient le sommet précédent j sur un plus court chemin de i à j
     private int[][] P;
-    BasicOrientedGraph G;
+    OrientedValuedGraph G;
 
     /**
      * constructeur par défaut
@@ -23,21 +23,39 @@ public class FloydWarshall
     {
         delta = new int[0][0];
         P = new int[0][0];
-        G = new BasicOrientedGraph();
-        INFINITY = BasicOrientedGraph.noValue();
+        G = new OrientedValuedGraph();
+        INFINITY = Integer.MAX_VALUE / 10;
     }
 
     /**
      * constructeur par valeur
      * @param G un graphe orienté valué par des entiers
      */
-    public FloydWarshall(BasicOrientedGraph G)
+    public FloydWarshall(OrientedValuedGraph G)
     {
         this.G = G;
         int size = G.size();
         delta = new int[size][size];
         P = new int[size][size];
-        INFINITY = BasicOrientedGraph.noValue();
+        INFINITY = Integer.MAX_VALUE / 10;
+    }
+
+    /**
+     * accesseur matrice delta
+     * @return la matrice delta des distances min
+     */
+    public int[][] getDelta()
+    {
+        return delta;
+    }
+
+    /**
+     * accesseur matrice P
+     * @return la matrice P du routage
+     */
+    public int[][] getP()
+    {
+        return delta;
     }
 
     /**
@@ -77,10 +95,10 @@ public class FloydWarshall
                 {
                     P[i][j] = i;
                     delta[i][j] = 0;
-                } else if (!G.get(i, j).equals(G.noValue()))
+                } else if (G.exists(i, j))
                 {
                     P[i][j] = i;
-                    delta[i][j] = G.get(i, j);
+                    delta[i][j] = G.getValue(i, j);
                 } else
                 {
                     P[i][j] = INFINITY;
@@ -95,30 +113,8 @@ public class FloydWarshall
      */
     public void showDelta()
     {
-        try
-        {
-            if (delta == null)
-            {
-                throw new NullPointerException("FloydWarshall::showP : delta==null");
-            } else
-            {
-                String str = "";
-                int T = delta.length;
-                for (int i = 0; i < T; i++)
-                {
-                    for (int j = 0; j < T; j++)
-                    {
-                        str += delta[i][j] + "\t";
-                    }
-                    str += "\n";
-                }
-                System.out.println(str.replace(G.noValue().toString(), "-"));
-            }
-
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        OrientedValuedGraph d = new OrientedValuedGraph( delta );
+        d.show();
     }
 
     /**
@@ -144,7 +140,7 @@ public class FloydWarshall
                     }
                     str += "\n";
                 }
-                System.out.println(str.replace(BasicOrientedGraph.noValue().toString(), "-"));
+                System.out.println(str.replace(FlowValues.noValue().toString(), "-"));
             }
 
         } catch (Exception e)
@@ -153,14 +149,18 @@ public class FloydWarshall
         }
     }
 
+    /**
+     * affiche le plus court chemin entre i et j
+     * @param i
+     * @param j
+     */
     public void showPath(int i, int j)
     {
         try
         {
-            if ((i < 0) || (j < 0) || (i >= G.size()) || (j >= G.size()))
-            {
-                throw new ArrayIndexOutOfBoundsException();
-            }
+            G.checkIndex(i);
+            G.checkIndex(j);
+
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -173,7 +173,7 @@ public class FloydWarshall
         if (i == j)
         {
             return "" + j;
-        } else if (P[i][j] == BasicOrientedGraph.noValue())
+        } else if (P[i][j] == i)
         {
             return "Pas de chemin de " + i + " a " + j;
         } else
@@ -192,22 +192,12 @@ public class FloydWarshall
      */
     private int min(int a, int b, int c)
     {
-        if ((b == BasicOrientedGraph.noValue()) || (c == BasicOrientedGraph.noValue()))
+        if ((b == INFINITY) || (c == INFINITY))
         {
             return a;
         } else
         {
             return (a < b + c ? a : b + c);
         }
-    }
-
-    public int[][] getDelta()
-    {
-        return delta;
-    }
-
-    public int[][] getP()
-    {
-        return delta;
     }
 }

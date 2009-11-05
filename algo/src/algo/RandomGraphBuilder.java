@@ -31,14 +31,8 @@ public class RandomGraphBuilder
     public FlowGraph generateRandomFlowGraph()
     {
 
-        FlowValues[][] values = new FlowValues[getNumVertices()][getNumVertices()];
-        for (int i = 0; i < numVertices; i++)
-        {
-            for (int j = 0; j < numVertices; j++)
-            {
-                values[i][j] = FlowValues.noValue();
-            }
-        }
+        FlowGraph G = new FlowGraph(getNumVertices());
+
 
         int edgesCounter = 0;
         //création chemin entre le premier et le dernier sommet
@@ -48,19 +42,28 @@ public class RandomGraphBuilder
 
             //liste de chemins aléatoires pour le chemin entre s et t
             List<Integer> randomVertices = new ArrayList<Integer>();
+
             randomVertices.add(indexOfSource());
-            for (int k = 0; k < numEdgesForThisPath; k++)
+
+            int k = 0;
+            while (randomVertices.size() <= numEdgesForThisPath)
             {
-                randomVertices.add(generateInteger(0, getNumVertices() - 1));
+                int randomVertice = generateInteger(0, getNumVertices() - 1);
+                if (!randomVertices.contains(randomVertice))
+                {
+                    randomVertices.add(randomVertice);
+                }
+                k++;
             }
+
 
             while (i < numEdgesForThisPath)
             {
-                values[randomVertices.get(i)][randomVertices.get(i + 1)] = getRandomValues();
+                G.set(randomVertices.get(i), randomVertices.get(i + 1), getRandomValues());
                 i++;
                 edgesCounter++;
             }
-            values[randomVertices.get(i)][indexOfSink()] = getRandomValues();
+            G.set(randomVertices.get(i), indexOfSink(), getRandomValues());
             edgesCounter++;
         }
         //création des derniers arcs
@@ -73,15 +76,15 @@ public class RandomGraphBuilder
                     i = generateInteger(0, getNumVertices() - 1);
                     j = generateInteger(0, getNumVertices() - 1);
 
-                } while (values[i][j] == null);
+                } while (!G.exists(i, j) || (i == j));
 
-                values[i][j] = getRandomValues();
+                G.set(i, j, getRandomValues());
 
                 edgesCounter++;
             }
         }
 
-        return new FlowGraph(values);
+        return G;
 
     }
 
@@ -172,7 +175,15 @@ public class RandomGraphBuilder
      */
     public void setDensity(double density)
     {
-        setNumEdges((int) (density * getNumVertices() * (getNumVertices() - 1)));
+        try {
+            if ( (density < 0) || (density > 1)) {
+                throw new IllegalArgumentException();
+            } else {
+                setNumEdges( (int) (density * getNumVertices() * (getNumVertices() - 1)) );
+            }
+        } catch (Exception e) {
+            System.err.println("Warning : RandomGraphBuilder::setDensity : invalid argument. Density not set");
+        }
     }
 
     /**
