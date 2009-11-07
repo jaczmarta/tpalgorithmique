@@ -103,9 +103,11 @@ public class FlowCostValues extends AbstractValues
     @Override
     public String toString()
     {
-        if ( equals(noValue()) )  {
+        if (equals(noValue()))
+        {
             return "-/-/-";
-        } else {
+        } else
+        {
             return getFlow() + "/" + getCapacity() + "/" + getCost();
         }
     }
@@ -115,9 +117,11 @@ public class FlowCostValues extends AbstractValues
      */
     public String toStringWithoutZeros()
     {
-        if ( equals(noValue()) || (getFlow() == 0) )  {
+        if (equals(noValue()) || (getFlow() == 0))
+        {
             return "-/-/-";
-        } else {
+        } else
+        {
             return getFlow() + "/" + getCapacity() + "/" + getCost();
         }
     }
@@ -127,21 +131,21 @@ public class FlowCostValues extends AbstractValues
      * @param flowValues paramètre à comparer
      * @return faux si le paramètre est null ou si l'un des paramètre de l'arc est différent de celui de this
      */
-    public boolean equals(FlowCostValues flowValues)
+    public boolean equals(IValues flowValues)
     {
         if (flowValues == null)
         {
             return false;
         }
-        if (flowValues.getFlow() != getFlow())
+        if (((FlowCostValues) flowValues).getFlow() != getFlow())
         {
             return false;
         }
-        if (flowValues.getCapacity() != getCapacity())
+        if (((FlowCostValues) flowValues).getCapacity() != getCapacity())
         {
             return false;
         }
-        if (flowValues.getCost() != getCost())
+        if (((FlowCostValues) flowValues).getCost() != getCost())
         {
             return false;
         }

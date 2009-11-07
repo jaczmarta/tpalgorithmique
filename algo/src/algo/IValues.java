@@ -10,4 +10,6 @@ package algo;
  */
 public interface IValues
 {
+
+    public boolean equals(IValues ivalue);
 }

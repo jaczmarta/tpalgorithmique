@@ -152,7 +152,8 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
      * @param capacity capacite de l'arc
      * @param cost cout de l'arc
      */
-    public void set(int i, int j, int flow, int capacity, int cost) {
+    public void set(int i, int j, int flow, int capacity, int cost)
+    {
         setFlow(i, j, flow);
         setCapacity(i, j, capacity);
         setCost(i, j, cost);
@@ -165,18 +166,24 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
      * @param j point de sortie de l'arc
      * @param flow augmentation voulue
      */
-    public void addFlow(int i, int j, int flow) {
-        setFlow(i, j, getFlow(i, j)+flow);
+    public void addFlow(int i, int j, int flow)
+    {
+        setFlow(i, j, getFlow(i, j) + flow);
     }
 
     /**
      * retourne le flot du graphe
      * @return le flot du graphe, ie la somme des flots des arcs sortants de s
      */
-    public int getGraphFlow() {
+    public int getGraphFlow()
+    {
         int F = 0;
-        for (int i = 0 ; i < size() ; i++) {
-            F += getFlow( indexOfSource() , i);
+        for (int i = 0; i < size(); i++)
+        {
+            if (exists(indexOfSource(), i))
+            {
+                F += getFlow(indexOfSource(), i);
+            }
         }
         return F;
     }
@@ -185,12 +192,16 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
      * retourne le cout du graphe
      * @return
      */
-    public int getGraphCost() {
+    public int getGraphCost()
+    {
         int C = 0;
-        for (int i = 0 ; i < size() ; i++) {
-            for (int j = 0 ; j < size() ; j++) {
-                if ( exists(i, j) ){
-                    C += getFlow(i, j)*getCost(i, j);
+        for (int i = 0; i < size(); i++)
+        {
+            for (int j = 0; j < size(); j++)
+            {
+                if (exists(i, j))
+                {
+                    C += getFlow(i, j) * getCost(i, j);
                 }
             }
         }
@@ -217,10 +228,10 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
     }
 
     /**
-     * calcule et retourne le graphe d'écart du graphe courant
+     * calcule et retourne le graphe d'écart du graphe courant en prenant en compte les couts
      * @return le graphe d'écart du graphe courant
      */
-    public OrientedValuedGraph getResultingNetwork()
+    public OrientedValuedGraph getResultingNetworkWithCosts()
     {
 
         OrientedValuedGraph Ge = new OrientedValuedGraph(size());
@@ -250,5 +261,84 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
         }
 
         return Ge;
+    }
+
+    /**
+     * calcule et retourne le graphe d'écart du graphe courant sans prendre en compte les couts
+     * @return le graphe d'écart du graphe courant
+     */
+    public OrientedValuedGraph getResultingNetwork()
+    {
+
+        OrientedValuedGraph Ge = new OrientedValuedGraph(size());
+
+        for (int i = 0; i < size(); i++)
+        {
+            for (int j = 0; j < size(); j++)
+            {
+
+                if (exists(i, j))
+                {
+
+                    int xij = getFlow(i, j);
+                    int cij = getCapacity(i, j);
+
+                    if (xij < cij)
+                    {
+                        Ge.setValue(i, j, cij - xij);
+                    }
+
+                    if (xij > 0)
+                    {
+                        Ge.setValue(j, i, xij);
+                    }
+                }
+            }
+        }
+
+        return Ge;
+    }
+
+    /**
+     * affiche le graphe sans afficher les arcs de flot nul
+     */
+    public void showWithoutZeros()
+    {
+        try
+        {
+            if (getValues() == null)
+            {
+                throw new NullPointerException("AbstractGraph::show : values==null");
+            } else
+            {
+                String str = "";
+
+                int T = size();
+
+                for (int i = 0; i < T; i++)
+                {
+                    for (int j = 0; j < T; j++)
+                    {
+
+                        if (!exists(i, j))
+                        {
+                            str += noValue().toStringWithoutZeros();
+                        } else
+                        {
+                            str += get(i, j).toStringWithoutZeros();
+                        }
+                        str += "\t";
+                    }
+                    str += "\n";
+                }
+                System.out.println(str);
+
+            }
+
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 }

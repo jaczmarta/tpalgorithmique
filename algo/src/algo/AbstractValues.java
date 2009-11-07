@@ -19,4 +19,6 @@ public abstract class AbstractValues implements IValues
     {
         return null;
     }
+
+    public abstract boolean equals(IValues ivalues);
 }

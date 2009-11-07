@@ -70,7 +70,7 @@ public class BellmanFord
 
         int cout = 0;
 
-        while ( (!stable) && k < G.size() )
+        while ((!stable) && k < G.size())
         {
             k++;
             stable = true;
@@ -83,7 +83,7 @@ public class BellmanFord
             for (int i = 0; i < G.size(); i++)
             {
                 for (int j = 0; j < G.size(); j++)
-                {                    
+                {
                     if (G.exists(j, i))
                     {
                         cout = oldDistances[j] + G.getValue(j, i);
@@ -99,19 +99,22 @@ public class BellmanFord
         }
     }
 
-    public List<Integer> getPath(int j) {
+    public List<Integer> getPath(int j)
+    {
 
         List<Integer> path = new ArrayList<Integer>();
 
-        if ( j == source ) {
-            path.add( j );
-        } else if ( distances[j] < G.infinityValue()) {
-            path.addAll( getPath(routage[j]) );
-            path.add( j );
+        if (j == source)
+        {
+            path.add(j);
+        } else if (distances[j] < G.infinityValue())
+        {
+            path.addAll(getPath(routage[j]));
+            path.add(j);
         }
 
         return path;
-        
+
     }
 
     /**
