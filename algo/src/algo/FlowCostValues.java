@@ -8,7 +8,7 @@ package algo;
  * représente la valeur d'un arc dans un graphe représentant un problème de flots
  * @author Rémi
  */
-public class FlowValues extends AbstractValues
+public class FlowCostValues extends AbstractValues
 {
 
     private int flow;
@@ -18,7 +18,7 @@ public class FlowValues extends AbstractValues
     /**
      * constructeur par défaut
      */
-    public FlowValues()
+    public FlowCostValues()
     {
         flow = 0;
         capacity = 0;
@@ -31,7 +31,7 @@ public class FlowValues extends AbstractValues
      * @param capacity la capacité
      * @param cost le cout
      */
-    public FlowValues(int flow, int capacity, int cost)
+    public FlowCostValues(int flow, int capacity, int cost)
     {
         setFlow(flow);
         setCapacity(capacity);
@@ -42,7 +42,7 @@ public class FlowValues extends AbstractValues
      * constructeur par clonage
      * @param flowValues l'objet à cloner
      */
-    public FlowValues(FlowValues flowValues)
+    public FlowCostValues(FlowCostValues flowValues)
     {
         setFlow(flowValues.getFlow());
         setCapacity(flowValues.getCapacity());
@@ -103,7 +103,19 @@ public class FlowValues extends AbstractValues
     @Override
     public String toString()
     {
-        if (equals(noValue())) {
+        if ( equals(noValue()) )  {
+            return "-/-/-";
+        } else {
+            return getFlow() + "/" + getCapacity() + "/" + getCost();
+        }
+    }
+
+    /**
+     * toString sans afficher les arcs sans flot
+     */
+    public String toStringWithoutZeros()
+    {
+        if ( equals(noValue()) || (getFlow() == 0) )  {
             return "-/-/-";
         } else {
             return getFlow() + "/" + getCapacity() + "/" + getCost();
@@ -115,7 +127,7 @@ public class FlowValues extends AbstractValues
      * @param flowValues paramètre à comparer
      * @return faux si le paramètre est null ou si l'un des paramètre de l'arc est différent de celui de this
      */
-    public boolean equals(FlowValues flowValues)
+    public boolean equals(FlowCostValues flowValues)
     {
         if (flowValues == null)
         {
@@ -142,8 +154,8 @@ public class FlowValues extends AbstractValues
      * abscence de valeur
      * @return flot, capacité, cout à -1
      */
-    public static FlowValues noValue()
+    public static FlowCostValues noValue()
     {
-        return new FlowValues(-1, -1, -1);
+        return new FlowCostValues(-1, -1, -1);
     }
 }

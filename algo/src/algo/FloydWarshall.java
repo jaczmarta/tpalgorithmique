@@ -1,7 +1,7 @@
 package algo;
 
 /**
- * algorithme de Floyd Warshall
+ * algorithme de Floyd Warshall calculant les plus courts chemins entre toutes les paires de sommets
  * @author remi
  */
 public class FloydWarshall
@@ -140,7 +140,7 @@ public class FloydWarshall
                     }
                     str += "\n";
                 }
-                System.out.println(str.replace(FlowValues.noValue().toString(), "-"));
+                System.out.println(str.replace(FlowCostValues.noValue().toString(), "-"));
             }
 
         } catch (Exception e)

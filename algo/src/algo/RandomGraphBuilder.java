@@ -28,22 +28,22 @@ public class RandomGraphBuilder
      * génère un graphe
      * @return le graphe généré
      */
-    public FlowGraph generateRandomFlowGraph()
+    public FlowCostGraph generateRandomFlowGraph()
     {
 
-        FlowGraph G = new FlowGraph(getNumVertices());
+        FlowCostGraph G = new FlowCostGraph(getNumVertices());
 
 
         int edgesCounter = 0;
         //création chemin entre le premier et le dernier sommet
         {
             int numEdgesForThisPath = generateInteger(0, getNumVertices() - 1);
-            int i = indexOfSource();
+            int i = G.indexOfSource();
 
             //liste de chemins aléatoires pour le chemin entre s et t
             List<Integer> randomVertices = new ArrayList<Integer>();
 
-            randomVertices.add(indexOfSource());
+            randomVertices.add(G.indexOfSource());
 
             int k = 0;
             while (randomVertices.size() <= numEdgesForThisPath)
@@ -63,7 +63,7 @@ public class RandomGraphBuilder
                 i++;
                 edgesCounter++;
             }
-            G.set(randomVertices.get(i), indexOfSink(), getRandomValues());
+            G.set(randomVertices.get(i), G.indexOfSink(), getRandomValues());
             edgesCounter++;
         }
         //création des derniers arcs
@@ -93,13 +93,13 @@ public class RandomGraphBuilder
      * retourne un objet FlowValue aléatoire conformément aux bornes fixées
      * @return un FlowValue aléatoire conformément aux bornes fixées
      */
-    private FlowValues getRandomValues()
+    private FlowCostValues getRandomValues()
     {
         int flow = 0;
         int capacity = generateInteger(1, getCapacityBound());
         int cost = generateInteger(1, getCostBound());
 
-        return new FlowValues(flow, capacity, cost);
+        return new FlowCostValues(flow, capacity, cost);
 
 
     }
@@ -197,23 +197,7 @@ public class RandomGraphBuilder
         return getNumVertices() * (getNumEdges() - 1);
     }
 
-    /**
-     * indexOfSource
-     * @return index de la source
-     */
-    private int indexOfSource()
-    {
-        return 0;
-    }
-
-    /**
-     * indexOfSing
-     * @return index du puit
-     */
-    private int indexOfSink()
-    {
-        return getNumVertices() - 1;
-    }
+    
 
     /**
      * @return un entier comprit entre min et max

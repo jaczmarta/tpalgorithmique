@@ -32,17 +32,20 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
         super(costValues);
     }
 
-   /**
-    * constructeur par matrice d'adjacence
-    * @param costValues la matrice d'adjacence du graphe
-    */
-    public OrientedValuedGraph( int[][] costValues ) {
+    /**
+     * constructeur par matrice d'adjacence
+     * @param costValues la matrice d'adjacence du graphe
+     */
+    public OrientedValuedGraph(int[][] costValues)
+    {
         super(costValues.length);
 
         int T = costValues.length;
         IntValues[][] val = new IntValues[T][T];
-        for (int i = 0 ; i < T ; i++) {
-            for (int j = 0 ; j < T ; j++) {
+        for (int i = 0; i < T; i++)
+        {
+            for (int j = 0; j < T; j++)
+            {
                 this.setValue(i, j, costValues[i][j]);
             }
         }
@@ -114,7 +117,7 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
     /**
      * getShortedPath
      * retourne le chemin le plus court entre le sommet i et le sommet j
-     * a l'aide de l'algorithme de Dijkstra
+     * a l'aide de l'algorithme de Bellman-ford
      * @param i point d'entrée de l'arc
      * @param j point de sortie de l'arc
      * @return chemin le plus court entre le sommet i et le sommet j
@@ -129,23 +132,11 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
             checkIndex(i);
             checkIndex(j);
 
-            //va contenir les distances min de i vers tous les autres sommets
-            int[] distances = new int[size()];
+            BellmanFord bf = new BellmanFord( i, this );
 
-            //va contenir le routage de i vers tous les autres sommets dans les pcc
-            int[] routage = new int[size()];
-
-            //pile nécessaire
-            Stack<Integer> stack = new Stack<Integer>();
-
-            init(i, distances, routage, stack);
-
-            runDikjstra(i, distances, routage, stack);
-
-            shortedPath = getPath(i, j, routage);
-
-
-            return shortedPath;
+            bf.runAlgorithm();
+            
+            shortedPath = bf.getPath(j);
 
         } catch (Exception e)
         {
@@ -155,101 +146,7 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
         return shortedPath;
     }
 
-    /**
-     * initialisation de l'algorithme de dijkstra
-     */
-    private void init(int i, int[] distances, int[] routage, Stack<Integer> stack)
-    {
+   
 
-        //initialisation distances et routage
-        for (int k = 0; k < distances.length; k++)
-        {
-            if (!IntValues.noValue().equals(get(i, k)))
-            {
-
-                distances[k] = getValue(i, k);
-            } else
-            {
-                distances[k] = infinityValue();
-            }
-
-            routage[k] = i;
-        }
-
-        stack.push(i);
-
-    }
-
-    /**
-     * algorithme de dijkstra
-     */
-    private void runDikjstra(int i, int[] distances, int[] routage, Stack<Integer> stack)
-    {
-        int t;
-
-        for (int k = 0; k < size() - 1; k++)
-        {
-            t = chooseVertice(i, stack, distances);
-            stack.push(t);
-            updateDistances(t, stack, distances, routage);
-        }
-    }
-
-    /**
-     * fonction de choix d'un sommet de l'algorithme de dijkstra
-     */
-    private int chooseVertice(int i, Stack<Integer> stack, int[] distances)
-    {
-        int result = i;
-
-        for (int s = 0; s < distances.length; s++)
-        {
-            if (!stack.contains(s))
-            {
-                if (distances[s] < distances[result])
-                {
-                    result = s;
-                }
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * fonction de mise à jour des distances dans l'algorithme de dijkstra
-     */
-    private void updateDistances(int t, Stack<Integer> stack, int[] distances, int[] routage)
-    {
-        for (int s = 0; s < distances.length; s++)
-        {
-            if (!stack.contains(s))
-            {
-                if (distances[t] + getValue(t, s) < distances[s])
-                {
-                    distances[s] = distances[t] + getValue(t, s);
-                    routage[s] = t;
-                }
-            }
-        }
-    }
-
-    /**
-     * retourne le plus court chemin de i à j après avoir fait tourné l'algoritme de dijkstra
-     */
-    private List<Integer> getPath(int i, int j, int[] routage)
-    {
-        List<Integer> list = new ArrayList<Integer>();
-        if (j == i)
-        {
-            list.add(i);
-        } else
-        {
-            list.addAll(getPath(i, routage[j], routage));
-            list.add(j);
-        }
-
-        return list;
-
-    }
+    
 }
