@@ -154,6 +154,12 @@ public abstract class AbstractGraph<Type extends AbstractValues>
         this.values = values;
     }
 
+    /**
+     * teste l'existence d'un arc
+     * @param i point d'entree de l'arc
+     * @param j point de sortie de l'arc
+     * @return vrai si l'arc (i, j) existe, faux sinon
+     */
     protected boolean exists(int i, int j)
     {
         checkIndex(i);
