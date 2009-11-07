@@ -113,7 +113,7 @@ public class FloydWarshall
      */
     public void showDelta()
     {
-        OrientedValuedGraph d = new OrientedValuedGraph( delta );
+        OrientedValuedGraph d = new OrientedValuedGraph(delta);
         d.show();
     }
 

@@ -52,9 +52,11 @@ public class IntValues extends AbstractValues
     @Override
     public String toString()
     {
-        if (equals(noValue())) {
+        if (equals(noValue()))
+        {
             return "-";
-        } else {
+        } else
+        {
             return getValue() + "";
         }
     }
@@ -64,12 +66,12 @@ public class IntValues extends AbstractValues
      * @param intValues paramètre à comparer
      * @return vrai si les valeurs sont égales, faux sinon ou si le paramètre est null
      */
-    public boolean equals(IntValues intValues)
+    public boolean equals(IValues intValues)
     {
         if (intValues == null)
         {
             return false;
         }
-        return getValue() == intValues.getValue();
+        return (getValue() == ((IntValues) intValues).getValue());
     }
 }

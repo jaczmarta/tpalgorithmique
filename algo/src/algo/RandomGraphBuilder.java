@@ -18,10 +18,25 @@ public class RandomGraphBuilder
     private static int DEFAULT_numVertices = 10;
     private int numEdges;
     private static int DEFAULT_numEdges = 0;
-    private int capacityBound;
-    private static int DEFAULT_capacityBound = 1;
+    private int capacityLowerBound;
+    private static int DEFAULT_capacity_LowerBound = 1;
+    private int capacityUpperBound;
+    private static int DEFAULT_capacityUpperBound = 1;
     private int costBound;
     private static int DEFAULT_costBound = 1;
+
+    /**
+     * constructeur
+     * fixe tous les paramètres à leurs valeurs par défaut
+     */
+    public RandomGraphBuilder()
+    {
+        numEdges = DEFAULT_numEdges;
+        numVertices = DEFAULT_numVertices;
+        capacityLowerBound = DEFAULT_capacity_LowerBound;
+        capacityUpperBound = DEFAULT_capacityUpperBound;
+        costBound = DEFAULT_costBound;
+    }
 
     /**
      * generateRandomFlowGraph
@@ -96,7 +111,7 @@ public class RandomGraphBuilder
     private FlowCostValues getRandomValues()
     {
         int flow = 0;
-        int capacity = generateInteger(1, getCapacityBound());
+        int capacity = generateInteger(getCapacityLowerBound(), getCapacityUpperBound());
         int cost = generateInteger(1, getCostBound());
 
         return new FlowCostValues(flow, capacity, cost);
@@ -137,19 +152,35 @@ public class RandomGraphBuilder
     }
 
     /**
-     * @return the capacityBound
+     * @return the capacityLowerBound
      */
-    public int getCapacityBound()
+    public int getCapacityLowerBound()
     {
-        return capacityBound;
+        return capacityLowerBound;
     }
 
     /**
-     * @param capacityBound the capacityBound to set
+     * @param capacityLowerBound the capacityLowerBound to set
      */
-    public void setCapacityBound(int capacityBound)
+    public void setCapacityLowerBound(int capacityLowerBound)
     {
-        this.capacityBound = capacityBound;
+        this.capacityLowerBound = capacityLowerBound;
+    }
+
+    /**
+     * @return the capacityUpperBound
+     */
+    public int getCapacityUpperBound()
+    {
+        return capacityUpperBound;
+    }
+
+    /**
+     * @param capacityUpperBound the capacityUpperBound to set
+     */
+    public void setCapacityUpperBound(int capacityBound)
+    {
+        this.capacityUpperBound = capacityBound;
     }
 
     /**
@@ -175,13 +206,17 @@ public class RandomGraphBuilder
      */
     public void setDensity(double density)
     {
-        try {
-            if ( (density < 0) || (density > 1)) {
+        try
+        {
+            if ((density < 0) || (density > 1))
+            {
                 throw new IllegalArgumentException();
-            } else {
-                setNumEdges( (int) (density * getNumVertices() * (getNumVertices() - 1)) );
+            } else
+            {
+                setNumEdges((int) (density * getNumVertices() * (getNumVertices() - 1)));
             }
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             System.err.println("Warning : RandomGraphBuilder::setDensity : invalid argument. Density not set");
         }
     }
@@ -196,8 +231,6 @@ public class RandomGraphBuilder
         //on interdit les boucles
         return getNumVertices() * (getNumEdges() - 1);
     }
-
-    
 
     /**
      * @return un entier comprit entre min et max

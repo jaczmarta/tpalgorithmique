@@ -158,7 +158,7 @@ public abstract class AbstractGraph<Type extends AbstractValues>
     {
         checkIndex(i);
         checkIndex(j);
-        return !noValue().equals(get(i, j));
+        return !((AbstractValues) noValue()).equals(get(i, j));
     }
 
     /**
@@ -194,7 +194,7 @@ public abstract class AbstractGraph<Type extends AbstractValues>
                     str += "\n";
                 }
                 System.out.println(str);
-                
+
             }
 
 

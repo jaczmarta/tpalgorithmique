@@ -132,10 +132,10 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
             checkIndex(i);
             checkIndex(j);
 
-            BellmanFord bf = new BellmanFord( i, this );
+            BellmanFord bf = new BellmanFord(i, this);
 
             bf.runAlgorithm();
-            
+
             shortedPath = bf.getPath(j);
 
         } catch (Exception e)
@@ -145,8 +145,4 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
 
         return shortedPath;
     }
-
-   
-
-    
 }

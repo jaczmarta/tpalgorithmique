@@ -15,6 +15,7 @@ public class Main
     public static void main(String[] args)
     {
 
+
         System.out.println("----------------------------- FLOYD - WARSHALL ---------------------------------");
         {
             OrientedValuedGraph G = new OrientedValuedGraph(5);
@@ -44,8 +45,8 @@ public class Main
             fg.set(3, 4, 1, 1, 1);
             fg.set(4, 5, 1, 2, 1);
 
-            fg.getResultingNetwork().show();
-            System.out.println(fg.getResultingNetwork().getShortedPath(0, 5));
+            fg.getResultingNetworkWithCosts().show();
+            System.out.println(fg.getResultingNetworkWithCosts().getShortedPath(0, 5));
         }
 
 
@@ -54,12 +55,12 @@ public class Main
             RandomGraphBuilder builder = new RandomGraphBuilder();
             builder.setNumVertices(10);
             builder.setDensity(0.4);
-            builder.setCapacityBound(5);
+            builder.setCapacityUpperBound(5);
             builder.setCostBound(1);
             builder.generateRandomFlowGraph().show();
         }
 
-        
+
         System.out.println("-----------------------------BUSACKER ET GOWEN ---------------------------------");
         {
             //Exemple ex2 feuille td 5
@@ -76,9 +77,29 @@ public class Main
 
             BusackerGowen bg = new BusackerGowen(fg);
             bg.runAlgorithm();
-            bg.getG().show();
-            System.out.println("Flot = "+bg.getG().getGraphFlow());
-            System.out.println("Cout = "+bg.getG().getGraphCost());
+            bg.getG().showWithoutZeros();
+            System.out.println("Flot = " + bg.getG().getGraphFlow());
+            System.out.println("Cout = " + bg.getG().getGraphCost());
+        }
+
+        System.out.println("-----------------------------BUSACKER ET GOWEN SUR GRAPHE ALEATOIRE ---------------------------------");
+        {
+
+
+            RandomGraphBuilder builder = new RandomGraphBuilder();
+            builder.setNumVertices(50);
+            builder.setDensity(0.3);
+            builder.setCapacityLowerBound(5);
+            builder.setCapacityUpperBound(20);
+            builder.setCostBound(5);
+
+            FlowCostGraph G = builder.generateRandomFlowGraph();
+
+            BusackerGowen bg = new BusackerGowen(G);
+            bg.runAlgorithm();
+            System.out.println("Flot = " + bg.getG().getGraphFlow());
+            System.out.println("Cout = " + bg.getG().getGraphCost());
+
         }
 
 

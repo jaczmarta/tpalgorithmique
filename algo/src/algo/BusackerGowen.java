@@ -9,13 +9,13 @@ import java.util.List;
 
 /**
  * algorithme de Busacker et Gowen recherchant le flot max de cout min dans un réseau de flots
+ * On cherche le chemin de s à t de cout min dans le graphe d'ecart pour augmenter le flot.
  * @author Rémi
  */
 public class BusackerGowen
 {
 
     private FlowCostGraph G;
-    private int flow;
 
     /**
      * constructeur
@@ -43,21 +43,8 @@ public class BusackerGowen
     }
 
     /**
-     * @return the flow
+     * lance l'algorithme de Busacker et Gowen
      */
-    public int getFlow()
-    {
-        return flow;
-    }
-
-    /**
-     * @param flow the flow to set
-     */
-    public void setFlow(int flow)
-    {
-        this.flow = flow;
-    }
-
     public void runAlgorithm()
     {
         int wantedFlow = Integer.MAX_VALUE / 10;
@@ -68,7 +55,11 @@ public class BusackerGowen
         {
             for (int j = 0; j < T; j++)
             {
-                G.setFlow(i, j, 0);
+                if (G.exists(i, j))
+                {
+                    G.setFlow(i, j, 0);
+                }
+
             }
         }
 
@@ -76,17 +67,20 @@ public class BusackerGowen
 
         do
         {
+            OrientedValuedGraph Ge = G.getResultingNetworkWithCosts();
 
-            path = G.getResultingNetwork().getShortedPath(G.indexOfSource(), G.indexOfSink());
-            
+
+            path = Ge.getShortedPath(G.indexOfSource(), G.indexOfSink());
+
             if (!path.isEmpty())
             {
                 int delta = getPossibleAugmentation(path);
                 updateFlow(path, delta);
             }
-            
+
         } while (!path.isEmpty() && (wantedFlow != G.getGraphFlow()));
-        
+
+
     }
 
     /**
@@ -100,9 +94,9 @@ public class BusackerGowen
         for (int k = 0; k < path.size() - 1; k++)
         {
             int i = path.get(k);
-            int j = path.get(k+1);
-            
-            if ( G.exists(i, j ) )
+            int j = path.get(k + 1);
+
+            if (G.exists(i, j))
             {
                 v = G.getCapacity(i, j) - G.getFlow(i, j);
             } else if (G.exists(j, i))
@@ -131,14 +125,14 @@ public class BusackerGowen
         for (int k = 0; k < path.size() - 1; k++)
         {
             int i = path.get(k);
-            int j = path.get(k+1);
+            int j = path.get(k + 1);
 
             if (G.exists(i, j))
             {
                 G.addFlow(i, j, delta);
             } else if (G.exists(j, i))
             {
-                G.addFlow(j, i, -flow);
+                G.addFlow(j, i, -delta);
             } else
             {
                 System.err.println("BusackerGowen::updateFlow : invalid edge (" + i + ", " + j + ")");
