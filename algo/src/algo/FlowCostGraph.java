@@ -8,14 +8,14 @@ package algo;
  * Représente un graphe pour les problèmes de flots
  * @author Rémi
  */
-public class FlowGraph extends AbstractGraph<FlowValues>
+public class FlowCostGraph extends AbstractGraph<FlowCostValues>
 {
 
     /**
      * constructeur par paramètre
      * @param flowValues la matrice d'adjacence du graphe
      */
-    public FlowGraph(FlowValues[][] flowValues)
+    public FlowCostGraph(FlowCostValues[][] flowValues)
     {
         super(flowValues);
     }
@@ -24,7 +24,7 @@ public class FlowGraph extends AbstractGraph<FlowValues>
      * constructeur par spécification de la taille du graphe
      * @param size
      */
-    public FlowGraph(int size)
+    public FlowCostGraph(int size)
     {
         super(size);
     }
@@ -33,9 +33,9 @@ public class FlowGraph extends AbstractGraph<FlowValues>
      * représente l'abscence de valeur d'un arc dans ce graphe
      * @return l'objet représentant l'abscence de valeur d'un arc
      */
-    public FlowValues noValue()
+    public FlowCostValues noValue()
     {
-        return FlowValues.noValue();
+        return FlowCostValues.noValue();
     }
 
     /**
@@ -45,9 +45,11 @@ public class FlowGraph extends AbstractGraph<FlowValues>
      * @return le label de l'arc (i, j)
      */
     @Override
-    public FlowValues get(int i, int j)
+    public FlowCostValues get(int i, int j)
     {
-        return (FlowValues) values[i][j];
+        checkIndex(i);
+        checkIndex(j);
+        return (FlowCostValues) values[i][j];
     }
 
     /**
@@ -135,7 +137,7 @@ public class FlowGraph extends AbstractGraph<FlowValues>
      * @param flowValues le label de l'arc
      */
     @Override
-    public void set(int i, int j, FlowValues flowValues)
+    public void set(int i, int j, FlowCostValues flowValues)
     {
         setFlow(i, j, flowValues.getFlow());
         setCapacity(i, j, flowValues.getCapacity());
@@ -143,7 +145,7 @@ public class FlowGraph extends AbstractGraph<FlowValues>
     }
 
     /**
-     * mutateur pour un arc par tous les parametre
+     * mutateur pour un arc par tous les parametres
      * @param i point d'entree de l'arc
      * @param j point de sortie de l'arc
      * @param flow flot de l'arc
@@ -151,7 +153,67 @@ public class FlowGraph extends AbstractGraph<FlowValues>
      * @param cost cout de l'arc
      */
     public void set(int i, int j, int flow, int capacity, int cost) {
+        setFlow(i, j, flow);
+        setCapacity(i, j, capacity);
+        setCost(i, j, cost);
 
+    }
+
+    /**
+     * ajoute un entier à un flot
+     * @param i point d'entrée de l'arc
+     * @param j point de sortie de l'arc
+     * @param flow augmentation voulue
+     */
+    public void addFlow(int i, int j, int flow) {
+        setFlow(i, j, getFlow(i, j)+flow);
+    }
+
+    /**
+     * retourne le flot du graphe
+     * @return le flot du graphe, ie la somme des flots des arcs sortants de s
+     */
+    public int getGraphFlow() {
+        int F = 0;
+        for (int i = 0 ; i < size() ; i++) {
+            F += getFlow( indexOfSource() , i);
+        }
+        return F;
+    }
+
+    /**
+     * retourne le cout du graphe
+     * @return
+     */
+    public int getGraphCost() {
+        int C = 0;
+        for (int i = 0 ; i < size() ; i++) {
+            for (int j = 0 ; j < size() ; j++) {
+                if ( exists(i, j) ){
+                    C += getFlow(i, j)*getCost(i, j);
+                }
+            }
+        }
+        return C;
+
+    }
+
+    /**
+     * indexOfSource
+     * @return index de la source
+     */
+    public int indexOfSource()
+    {
+        return 0;
+    }
+
+    /**
+     * indexOfSing
+     * @return index du puit
+     */
+    public int indexOfSink()
+    {
+        return size() - 1;
     }
 
     /**
@@ -176,12 +238,12 @@ public class FlowGraph extends AbstractGraph<FlowValues>
 
                     if (xij < cij)
                     {
-                        Ge.setValue(i, j, cij - xij);
+                        Ge.setValue(i, j, getCost(i, j));
                     }
 
                     if (xij > 0)
                     {
-                        Ge.setValue(j, i, xij);
+                        Ge.setValue(j, i, -getCost(i, j));
                     }
                 }
             }
