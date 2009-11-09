@@ -1,5 +1,8 @@
 package algo;
 
+import values.FlowCostValues;
+import graphs.OrientedValuedGraph;
+
 /**
  * algorithme de Floyd Warshall calculant les plus courts chemins entre toutes les paires de sommets
  * @author remi

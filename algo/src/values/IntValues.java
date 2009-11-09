@@ -1,14 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package algo;
-
-import java.util.List;
+package values;
 
 /**
  * représente la valeur d'un arc dans un graphe orienté valué
- * @author Rémi
  */
 public class IntValues extends AbstractValues
 {

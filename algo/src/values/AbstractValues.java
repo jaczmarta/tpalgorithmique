@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package algo;
+package values;
 
 /**
  * représente des valeurs d'arcs abstraites

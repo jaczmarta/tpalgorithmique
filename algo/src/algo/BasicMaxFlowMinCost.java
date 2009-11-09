@@ -4,6 +4,8 @@
  */
 package algo;
 
+import graphs.FlowCostGraph;
+
 /**
  * algorithme de base pour chercher le flot max de cout min dans un graphe de flot avec des couts
  * La méthode consiste a chercher un flot max puis de reduire le cout en eliminant les cycles de cout

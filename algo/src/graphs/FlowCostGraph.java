@@ -1,8 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package algo;
+package graphs;
+
+import values.FlowCostValues;
 
 /**
  * Représente un graphe pour les problèmes de flots
@@ -206,6 +204,7 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
             }
         }
         return C;
+
 
     }
 

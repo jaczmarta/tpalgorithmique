@@ -1,7 +1,11 @@
-package algo;
+package graphs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import values.AbstractValues;
+import values.IValues;
 
 /**
  * représente un graphe quelconque (valué ou non, arcs labellisés par des objets Type)
@@ -130,7 +134,7 @@ public abstract class AbstractGraph<Type extends AbstractValues>
      * @param i index à tester
      * @throws ArrayIndexOutOfBoundsException
      */
-    protected void checkIndex(int i) throws ArrayIndexOutOfBoundsException
+    public void checkIndex(int i) throws ArrayIndexOutOfBoundsException
     {
         if ((i < 0) || (i >= getValues().length))
         {
@@ -141,7 +145,7 @@ public abstract class AbstractGraph<Type extends AbstractValues>
     /**
      * @return the values
      */
-    protected IValues[][] getValues()
+    public IValues[][] getValues()
     {
         return values;
     }
@@ -160,11 +164,29 @@ public abstract class AbstractGraph<Type extends AbstractValues>
      * @param j point de sortie de l'arc
      * @return vrai si l'arc (i, j) existe, faux sinon
      */
-    protected boolean exists(int i, int j)
+    public boolean exists(int i, int j)
     {
         checkIndex(i);
         checkIndex(j);
         return !((AbstractValues) noValue()).equals(get(i, j));
+    }
+    
+    public boolean isSink(int i) {
+    	checkIndex(i);
+    	int j = 0;
+    	while ((j < values.length) && (!exists(i, j)) || (i == j)) {
+    		j++;
+    	}
+        return (j == values.length);
+    }
+    
+    public boolean isSource(int i) {
+    	checkIndex(i);
+    	int j = 0;
+    	while ((j < values.length) && (!exists(j, i)) || (i == j)) {
+    		j++;
+    	}
+        return (j == values.length);
     }
 
     /**
@@ -201,6 +223,7 @@ public abstract class AbstractGraph<Type extends AbstractValues>
                 }
                 System.out.println(str);
 
+
             }
 
 
@@ -210,3 +233,4 @@ public abstract class AbstractGraph<Type extends AbstractValues>
         }
     }
 }
+
