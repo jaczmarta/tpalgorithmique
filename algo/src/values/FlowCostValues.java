@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package algo;
+package values;
 
 /**
  * représente la valeur d'un arc dans un graphe représentant un problème de flots
@@ -33,9 +33,9 @@ public class FlowCostValues extends AbstractValues
      */
     public FlowCostValues(int flow, int capacity, int cost)
     {
-        setFlow(flow);
-        setCapacity(capacity);
-        setCost(cost);
+        this.flow = flow;
+        this.capacity = capacity;
+        this.cost = cost;
     }
 
     /**

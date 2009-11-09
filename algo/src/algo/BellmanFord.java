@@ -4,6 +4,8 @@
  */
 package algo;
 
+import graphs.OrientedValuedGraph;
+
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,12 +1,13 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package algo;
+package graphs;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import algo.BellmanFord;
+
+import values.IValues;
+import values.IntValues;
 
 /**
  * Représente un graphe de coûts.

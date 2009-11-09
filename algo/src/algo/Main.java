@@ -1,5 +1,9 @@
 package algo;
 
+import graphs.FlowCostGraph;
+import graphs.OrientedValuedGraph;
+import graphs.RandomGraphBuilder;
+
 import java.util.ArrayList;
 
 /**
@@ -101,13 +105,5 @@ public class Main
             System.out.println("Cout = " + bg.getG().getGraphCost());
 
         }
-
-
-
-
-
-
-
-
     }
 }
