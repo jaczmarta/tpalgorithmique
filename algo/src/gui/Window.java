@@ -32,7 +32,6 @@ public class Window extends JFrame implements ActionListener {
 		setContentPane(contentPane);
 		
 		setLocation(new Point(100, 100));
-		setSize(new Dimension(500,500));
 		setResizable(true);
 		setDefaultLookAndFeelDecorated(true); 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -40,7 +39,6 @@ public class Window extends JFrame implements ActionListener {
         setVisible(true);
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
 		

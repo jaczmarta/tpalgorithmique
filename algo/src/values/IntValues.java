@@ -1,20 +1,31 @@
 package values;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serializable;
+
 /**
  * représente la valeur d'un arc dans un graphe orienté valué
  */
-public class IntValues extends AbstractValues
+public class IntValues extends AbstractValues implements Serializable, Externalizable
 {
 
     private int value;
 
+    public IntValues()
+    {
+        value = IValues.infinity;
+    }
+    
     /**
      * constructeur par paramètre
      * @param cost
      */
     public IntValues(int cost)
     {
-        setValue(cost);
+        value = cost;
     }
 
     /**
@@ -39,7 +50,7 @@ public class IntValues extends AbstractValues
      */
     public static IntValues noValue()
     {
-        return new IntValues(Integer.MAX_VALUE / 10);
+        return new IntValues(IValues.infinity);
     }
 
     @Override
@@ -67,4 +78,13 @@ public class IntValues extends AbstractValues
         }
         return (getValue() == ((IntValues) intValues).getValue());
     }
+    
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		this.value = in.readInt();
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(value);
+		
+	}
 }

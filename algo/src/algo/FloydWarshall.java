@@ -1,6 +1,7 @@
 package algo;
 
 import values.FlowCostValues;
+import values.IValues;
 import graphs.OrientedValuedGraph;
 
 /**
@@ -9,9 +10,6 @@ import graphs.OrientedValuedGraph;
  */
 public class FloydWarshall
 {
-
-    //représente une distance infinie
-    public static int INFINITY;
     //matrice delta des chemins les plus courts
     private int[][] delta;
     //matrice du routage :
@@ -27,7 +25,6 @@ public class FloydWarshall
         delta = new int[0][0];
         P = new int[0][0];
         G = new OrientedValuedGraph();
-        INFINITY = Integer.MAX_VALUE / 10;
     }
 
     /**
@@ -40,7 +37,6 @@ public class FloydWarshall
         int size = G.size();
         delta = new int[size][size];
         P = new int[size][size];
-        INFINITY = Integer.MAX_VALUE / 10;
     }
 
     /**
@@ -104,8 +100,8 @@ public class FloydWarshall
                     delta[i][j] = G.getValue(i, j);
                 } else
                 {
-                    P[i][j] = INFINITY;
-                    delta[i][j] = INFINITY;
+                    P[i][j] = IValues.infinity;
+                    delta[i][j] = IValues.infinity;
                 }
             }
         }
@@ -195,7 +191,7 @@ public class FloydWarshall
      */
     private int min(int a, int b, int c)
     {
-        if ((b == INFINITY) || (c == INFINITY))
+        if ((b == IValues.infinity) || (c == IValues.infinity))
         {
             return a;
         } else

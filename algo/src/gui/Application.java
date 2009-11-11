@@ -2,9 +2,6 @@ package gui;
 
 import java.io.IOException;
 
-
-
-
 /**
  * Classe principale de l'application: ouverture de l'interface graphique
  * 

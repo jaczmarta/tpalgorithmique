@@ -2,7 +2,6 @@ package graphs;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import algo.BellmanFord;
 
@@ -34,18 +33,53 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
     }
 
     /**
+     * Constructeur par copie
+     * @param g
+     */
+    public OrientedValuedGraph(OrientedValuedGraph g)
+    {
+    	super(g);
+    }
+    
+    /**
+     * Constructeur par copie sur un graphe de flot/capacité/cout
+     * @param g
+     */
+    public OrientedValuedGraph(FlowCostGraph g, int label)
+    {
+    	values = new IntValues[g.size()][g.size()];
+        for (int i = 0; i < values.length; i++)
+        {
+            for (int j = 0; j < values.length; j++)
+            {
+            	if (label == 0) {
+            		this.setValue(i, j, g.getFlow(i, j));
+            	}
+            	else if (label == 1) {
+            		this.setValue(i, j, g.getCapacity(i, j));
+            	}
+            	else if (label == 2) {
+            		this.setValue(i, j, g.getCost(i, j));
+            	}
+            	else {
+            		throw new IllegalArgumentException("Label inexistant");
+            	}
+            }
+        }
+    }
+    
+    /**
      * constructeur par matrice d'adjacence
      * @param costValues la matrice d'adjacence du graphe
      */
     public OrientedValuedGraph(int[][] costValues)
     {
-        super(costValues.length);
+//        super(costValues.length);
 
-        int T = costValues.length;
-        IntValues[][] val = new IntValues[T][T];
-        for (int i = 0; i < T; i++)
+    	values = new IntValues[costValues.length][costValues.length];
+        for (int i = 0; i < values.length; i++)
         {
-            for (int j = 0; j < T; j++)
+            for (int j = 0; j < values.length; j++)
             {
                 this.setValue(i, j, costValues[i][j]);
             }
@@ -68,16 +102,6 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
     public IValues noValue()
     {
         return IntValues.noValue();
-    }
-
-    /**
-     * représente une valeur infinie d'un arc
-     * @return la valeur infinie d'un arc
-     */
-    public int infinityValue()
-    {
-        //max_value/10 pour éviter les problèmes de débordement d'entiers
-        return Integer.MAX_VALUE / 10;
     }
 
     /**
@@ -112,7 +136,7 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
      */
     public void setValue(int i, int j, int cost)
     {
-        get(i, j).setValue(cost);
+        set(i, j, new IntValues(cost));
     }
 
     /**
@@ -146,4 +170,5 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
 
         return shortedPath;
     }
+    
 }

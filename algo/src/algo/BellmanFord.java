@@ -9,6 +9,8 @@ import graphs.OrientedValuedGraph;
 import java.util.ArrayList;
 import java.util.List;
 
+import values.IValues;
+
 /**
  * algorithme de Bellman-Ford calculant les plus court chemin d'un sommet source vers tous les autres
  * @author Rémi
@@ -109,7 +111,7 @@ public class BellmanFord
         if (j == source)
         {
             path.add(j);
-        } else if (distances[j] < G.infinityValue())
+        } else if (distances[j] < IValues.infinity)
         {
             path.addAll(getPath(routage[j]));
             path.add(j);
