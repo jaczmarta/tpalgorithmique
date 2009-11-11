@@ -8,29 +8,33 @@ import values.FlowCostValues;
 public class RandomGraphBuilder
 {
 
-    private static int DEFAULT_costBound = 1;
-    private static int DEFAULT_numVertices = 10;
+    private static int DEFAULT_numVertices = 5;
     private static int DEFAULT_numEdges = 0;
     private static int DEFAULT_capacity_LowerBound = 1;
     private static int DEFAULT_capacityUpperBound = 1;
+    private static int DEFAULT_costLowerBound = 1;
+    private static int DEFAULT_costUpperBound = 1;
     
     private int numVertices;
     private int numEdges;
     private int capacityLowerBound;
     private int capacityUpperBound;
-    private int costBound;
+    private int costLowerBound;
+    private int costUpperBound;
+    
 
-    /**
+	/**
      * constructeur
      * fixe tous les paramètres à leurs valeurs par défaut
      */
     public RandomGraphBuilder()
     {
-        numEdges = DEFAULT_numEdges;
-        numVertices = DEFAULT_numVertices;
-        capacityLowerBound = DEFAULT_capacity_LowerBound;
-        capacityUpperBound = DEFAULT_capacityUpperBound;
-        costBound = DEFAULT_costBound;
+        numEdges			= DEFAULT_numEdges;
+        numVertices 		= DEFAULT_numVertices;
+        capacityLowerBound 	= DEFAULT_capacity_LowerBound;
+        capacityUpperBound 	= DEFAULT_capacityUpperBound;
+        costLowerBound 		= DEFAULT_costLowerBound;
+        costUpperBound 		= DEFAULT_costUpperBound;
     }
 
     /**
@@ -212,11 +216,10 @@ public class RandomGraphBuilder
      */
     private FlowCostValues getRandomValues()
     {
-        int flow = 0;
-        int capacity = generateInteger(getCapacityLowerBound(), getCapacityUpperBound());
-        int cost = generateInteger(1, getCostBound());
-
-        return new FlowCostValues(flow, capacity, cost);
+        int capacity 	= generateInteger(getCapacityLowerBound(), getCapacityUpperBound());
+        int cost 		= generateInteger(getCostLowerBound(), getCostUpperBound());
+        
+        return new FlowCostValues(0, capacity, cost);
     }
 
     /**
@@ -283,23 +286,25 @@ public class RandomGraphBuilder
         this.capacityUpperBound = capacityBound;
     }
 
-    /**
-     * @return the costBound
-     */
-    public int getCostBound()
-    {
-        return costBound;
-    }
+   
 
-    /**
-     * @param costBound the costBound to set
-     */
-    public void setCostBound(int costBound)
-    {
-        this.costBound = costBound;
-    }
+    public int getCostLowerBound() {
+		return costLowerBound;
+	}
 
-    /**
+	public void setCostLowerBound(int costLowerBound) {
+		this.costLowerBound = costLowerBound;
+	}
+
+	public int getCostUpperBound() {
+		return costUpperBound;
+	}
+
+	public void setCostUpperBound(int costUpperBound) {
+		this.costUpperBound = costUpperBound;
+	}
+
+	/**
      * setDensity
      * fixe la densité du graphe en fonction du nombre max d'arcs => densié = 1 <=> graphe complet
      * densite = nombre d'arcs/nombre d'arcs possibles
@@ -336,10 +341,10 @@ public class RandomGraphBuilder
     
     /**
      * 
-     * @return le nombre maximal d'aretes ( n(n-1) / 2 )
+     * @return le nombre maximal d'aretes ( n(n-1) / 2 ) - 1 (car pas d'arete de s a t)
      */
     public int maxEdges() {
-    	return (getNumVertices() * (getNumVertices() -1 )) / 2;
+    	return ((getNumVertices() * (getNumVertices() -1 )) / 2) - 1;
     }
     
     /**

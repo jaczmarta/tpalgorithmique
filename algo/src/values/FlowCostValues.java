@@ -4,11 +4,17 @@
  */
 package values;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serializable;
+
 /**
  * représente la valeur d'un arc dans un graphe représentant un problème de flots
  * @author Rémi
  */
-public class FlowCostValues extends AbstractValues
+public class FlowCostValues extends AbstractValues implements Serializable, Externalizable
 {
 
     private int flow;
@@ -156,10 +162,25 @@ public class FlowCostValues extends AbstractValues
 
     /**
      * abscence de valeur
-     * @return flot, capacité, cout à -1
+     * @return flot, capacité, cout à infini
+     * @see IValues
      */
     public static FlowCostValues noValue()
     {
-        return new FlowCostValues(-1, -1, -1);
+        return new FlowCostValues(IValues.infinity, IValues.infinity, IValues.infinity);
     }
+
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		this.flow = in.readInt();
+		this.capacity = in.readInt();
+		this.cost = in.readInt();
+	}
+
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(flow);
+		out.writeInt(capacity);
+		out.writeInt(cost);
+		
+	}
+
 }

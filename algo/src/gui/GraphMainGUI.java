@@ -1,161 +1,267 @@
 package gui;
 
-import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Hashtable;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import graphs.AbstractGraph;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
-public class GraphMainGUI extends Window implements ActionListener {
+import graphs.FlowCostGraph;
+import graphs.OrientedValuedGraph;
+import graphs.RandomGraphBuilder;
+
+public class GraphMainGUI extends Window {
 	
 	private static final long serialVersionUID = 1L;
-	private Hashtable<String, AbstractGraph> graphList;
-	
+
 	JMenuBar menuBar;
 		JMenu fileMenu;
-			JMenu newMenu;
-				JMenuItem newGraphMenuItem;
+			JMenuItem openMenuItem;
 			JMenuItem quitMenuItem;
-		JMenu floydMenu;
-			JMenuItem applyFloydMenuItem;
-			JMenuItem applyFloydModifMenuItem;
-		JMenu graphMenu;
-			JMenuItem generateGraphMenuItem;
+			
+	StringBuffer choices;
+	int numVertices = 10;
+	JTextField numVerticesEntry;
+	JLabel verticesLabel;
+	
+	int numEdges;
+
+	double density = 0.5;
+	JTextField densityEntry;
+	JLabel densityLabel;
+	
+	int minCost = 1;
+	JTextField minCostEntry;
+	JLabel minCostLabel;
+
+	int maxCost = 5;
+	JTextField maxCostEntry;
+	JLabel maxCostLabel;
+	
+	int minCapacity = 1;
+	JTextField minCapacityEntry;
+	JLabel minCapacityLabel;
+
+	int maxCapacity = 5;
+	JTextField maxCapacityEntry;
+	JLabel maxCapacityLabel;
 	
 	JButton createGraphButton;
-	JButton floydButton;
-	JButton floydModifButton;		
-	JButton generateGraphButton; 
-		
+    
 	public GraphMainGUI() {
         super("Générateur de graphe");
-        graphList = new Hashtable<String, AbstractGraph>();
-		setButtons(getContentPane());
-		setMenus(getContentPane());
-		pack();	
-        setVisible(true);
+        init();
+		setVisible(true);
+		pack();
 	}
 	
-	public void setMenus(Container pane) {		
-		menuBar = new JMenuBar();
-
-		fileMenu 	= new JMenu("Fichier");		
-		newMenu 	= new JMenu("Nouveau");
-		floydMenu 	= new JMenu("Floyd-Warshall");
-		graphMenu	= new JMenu("Graphe");
+	
+	public void init() {
+		setMenuBar();
 		
-		newGraphMenuItem		= new JMenuItem("Graphe");
-		quitMenuItem			= new JMenuItem("Quitter");
-		applyFloydMenuItem		= new JMenuItem("Appliquer Floyd-Warshall");
-		applyFloydModifMenuItem	= new JMenuItem("Appliquer Floyd-Warshall modifié");
-		generateGraphMenuItem	= new JMenuItem("Générer un graphe");
+        GridBagConstraints grid = new GridBagConstraints();
+        getContentPane().setLayout(new GridBagLayout());        
+        grid.insets = new Insets(5,5,5,5);  //top padding
+        
+        {
+	        verticesLabel = new JLabel();    
+	        verticesLabel.setText("Nombre de sommets:");
+			grid.gridx = 0;
+			grid.gridy = 0;
+			getContentPane().add(verticesLabel, grid);
+	
+			numVerticesEntry = new JTextField("", 5);     
+			grid.gridx = 1;
+			grid.gridy = 0;
+			getContentPane().add(numVerticesEntry, grid);      
+        }
+        
+        {
+        	densityLabel = new JLabel();    
+        	densityLabel.setText("Densité:");
+			grid.gridx = 0;
+			grid.gridy = 1;
+			getContentPane().add(densityLabel, grid);
+	
+			densityEntry = new JTextField("", 5);     
+			grid.gridx = 1;
+			grid.gridy = 1;
+			getContentPane().add(densityEntry, grid);
+        }
+        
+        costSelection(grid);
+        capacitySelection(grid);
+        
+        {
+        	createGraphButton = new JButton("Générer !");
+			grid.gridx = 3; 
+			grid.gridy = 8; 
+			getContentPane().add(createGraphButton, grid);
+			createGraphButton.addActionListener(this);
+        }
+        
+	}
+	
+	public void setMenuBar() {
+		menuBar 	= new JMenuBar();
+		fileMenu 	= new JMenu("Fichier");	
 		
+		openMenuItem = new JMenuItem("Ouvrir un graphe...");
+		quitMenuItem = new JMenuItem("Quitter");
+		
+		openMenuItem = new JMenuItem("Ouvrir un graphe...");
+		quitMenuItem = new JMenuItem("Quitter");
 
-		fileMenu.add(newMenu);
+		fileMenu.add(openMenuItem);
 		fileMenu.addSeparator();
 		fileMenu.add(quitMenuItem);		
-		
-		newMenu	.add(newGraphMenuItem);
-		
-		floydMenu.add(applyFloydMenuItem);
-		floydMenu.add(applyFloydModifMenuItem);
-		
-		graphMenu.add(generateGraphMenuItem);
-		
+						
 		menuBar	.add(fileMenu);
-		menuBar	.add(floydMenu);
-		menuBar	.add(graphMenu);
-		menuBar	.setVisible(true);
 
-		newGraphMenuItem		.addActionListener(this);
+		openMenuItem					.addActionListener(this);
 		quitMenuItem			.addActionListener(this);
-		applyFloydMenuItem		.addActionListener(this);
-		applyFloydModifMenuItem	.addActionListener(this);
-		generateGraphMenuItem	.addActionListener(this);
-		
+
+		menuBar	.setVisible(true);
 		setJMenuBar(menuBar);
 	}
 	
-	public void setButtons(Container pane) {
-		GridBagConstraints grid = new GridBagConstraints();
-		pane.setLayout(new GridBagLayout());
-		
-		createGraphButton = new JButton("Créer un graphe");
-		grid.fill = GridBagConstraints.HORIZONTAL;
-		grid.gridx = 0;       //aligned with button 2
-		grid.gridy = 0;       //third row
-		grid.insets = new Insets(5,5,5,5);  //top padding
-		createGraphButton.addActionListener(this);
-		pane.add(createGraphButton, grid);
-		
-		floydButton 		= new JButton("Appliquer Floyd");
-		grid.fill = GridBagConstraints.HORIZONTAL;
-		grid.gridx = 1;       //aligned with button 2
-		grid.gridy = 0;       //third row
-		grid.insets = new Insets(5,5,5,5);  //top padding
-		floydButton.addActionListener(this);
-		pane.add(floydButton, grid);
-		
-		floydModifButton 	= new JButton("Appliquer Floyd modifié");
-		grid.fill = GridBagConstraints.HORIZONTAL;
-		grid.gridx = 1;       //aligned with button 2
-		grid.gridy = 1;       //third row
-		grid.insets = new Insets(5,5,5,5);  //top padding
-		floydModifButton.addActionListener(this);
-		pane.add(floydModifButton, grid);
-		
-		generateGraphButton = new JButton("Générer un graphe");
-		grid.fill = GridBagConstraints.HORIZONTAL;
-		grid.gridx = 2;
-		grid.gridy = 0;       //third row
-		grid.insets = new Insets(5,5,5,5);  //top padding
-		generateGraphButton	.addActionListener(this);
-		pane.add(generateGraphButton, grid);
-	}
-
-	public void actionPerformed(ActionEvent e) {
-		Object source = e.getSource();
-		if (source == newGraphMenuItem){
-			try {
-				build();
-			} 
-			catch (Exception exception) {
-				System.out.println(exception.getMessage());
-			}
-		
-		}
-		else if (source == createGraphButton) {
-			new ManualCreation();
-		}
-		else if (source == applyFloydMenuItem) {
-			try {
-	            
-			} 
-			catch (Exception exception) {
-				System.out.println(exception.getMessage());
-			}
-		}
-		
-		else if (source == generateGraphMenuItem) {
-			try {
-	            
-			} 
-			catch (Exception exception) {
-				System.out.println(exception.getMessage());
-			}
-		}
-		else if (source == quitMenuItem) {
+	public void actionPerformed(ActionEvent evt) {
+		Object source = evt.getSource();
+		if (source == quitMenuItem) {
 			System.exit(1);
 		}
+		else if (source == openMenuItem) {
+			try {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setCurrentDirectory(new File("."));
+				int openResult = chooser.showDialog(chooser, "Open");
+				if (openResult == JFileChooser.APPROVE_OPTION) {
+					 
+					String fileName = new String(chooser.getSelectedFile().toString());
+					try {
+						String extension = fileName.substring(fileName.lastIndexOf('.'));
+						if (extension.compareTo(".ovg") == 0) {
+							OrientedValuedGraph graph = new OrientedValuedGraph(0);
+							graph.deserialize(fileName);
+							new SingleValuedGraphWindow(graph);
+						}
+						else if (extension.compareTo(".fcg") == 0) {
+							FlowCostGraph graph = new FlowCostGraph(0);
+							graph.deserialize(fileName);
+							new FlowCostGraphWindow(graph);
+						}
+					}
+					catch (IOException erreur) {
+						System.out.println(erreur.getMessage());
+					}
+				}
+			} 
+			catch (Exception exception) {
+				System.out.println(exception.getMessage());
+			}
+		}
+		else if (source == createGraphButton) {
+			RandomGraphBuilder builder = new RandomGraphBuilder();
+			try {
+				numVertices 	= Integer.parseInt(numVerticesEntry.getText());
+				density			= Double.parseDouble(densityEntry.getText());
+				minCost 		= Integer.parseInt(minCostEntry.getText());
+				maxCost 		= Integer.parseInt(maxCostEntry.getText());
+				minCapacity 	= Integer.parseInt(minCapacityEntry.getText());
+				maxCapacity 	= Integer.parseInt(maxCapacityEntry.getText());
+			
+	            builder.setNumVertices(numVertices);
+	            builder.setDensity(density);
+	            builder.setCapacityLowerBound(minCapacity);
+	            builder.setCapacityUpperBound(maxCapacity);
+		        builder.setCostLowerBound(minCost);
+		        builder.setCostUpperBound(maxCost);
+	            
+	            new FlowCostGraphWindow(builder.generateRandomFlowGraph());
+			}
+			catch (NumberFormatException exception) {
+				JOptionPane.showMessageDialog(this,
+					       "Tous les champs n'ont pas été remplis correctement.",
+					       "Warning", 
+					        JOptionPane.YES_NO_OPTION);
+			}
+			catch (Exception e) {
+				new ErrorMessage(e);
+			}
+		}
+    }
+
+	public void capacitySelection(GridBagConstraints grid) {
+		{
+        	minCapacityLabel = new JLabel();    
+        	minCapacityLabel.setText("Capacité mimum:");
+			grid.gridx = 0;
+			grid.gridy = 6;
+			getContentPane().add(minCapacityLabel, grid);
+	
+			minCapacityEntry = new JTextField("", 5);    
+			grid.gridx = 1;
+			grid.gridy = 6;
+			getContentPane().add(minCapacityEntry, grid);
+        }
+        
+        {
+        	maxCapacityLabel = new JLabel();    
+        	maxCapacityLabel.setText("Capacité maximum:");
+			grid.gridx = 0;
+			grid.gridy = 7;
+			getContentPane().add(maxCapacityLabel, grid);
+	
+			maxCapacityEntry = new JTextField("", 5);   
+			grid.gridx = 1;
+			grid.gridy = 7;
+			grid.insets = new Insets(5,5,5,5);
+			getContentPane().add(maxCapacityEntry, grid);
+        }
 	}
+	
+	
+	public void costSelection(GridBagConstraints grid) {
+		{
+        	minCostLabel = new JLabel();    
+        	minCostLabel.setText("Cout minimum:");
+			grid.gridx = 0;
+			grid.gridy = 4;
+			getContentPane().add(minCostLabel, grid);
+	
+			minCostEntry = new JTextField("", 5);     
+			grid.gridx = 1;
+			grid.gridy = 4;
+			getContentPane().add(minCostEntry, grid);
+        }
+        
+        {
+        	maxCostLabel = new JLabel();    
+        	maxCostLabel.setText("Cout maximum:");
+			grid.gridx = 0;
+			grid.gridy = 5;
+			getContentPane().add(maxCostLabel, grid);
+	
+			maxCostEntry = new JTextField("", 5);     
+			grid.gridx = 1;
+			grid.gridy = 5;
+			grid.insets = new Insets(5,5,5,5);
+			getContentPane().add(maxCostEntry, grid);
+        }   
+		
+	}
+	
+	
 }
 
 

@@ -26,6 +26,15 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
     {
         super(size);
     }
+    
+    /**
+     * Constructeur par copie
+     * @param g
+     */
+    public FlowCostGraph(FlowCostGraph g)
+    {
+        super(g);
+    }
 
     /**
      * représente l'abscence de valeur d'un arc dans ce graphe
@@ -243,15 +252,15 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
                 if (exists(i, j))
                 {
 
-                    int xij = getFlow(i, j);
-                    int cij = getCapacity(i, j);
+                    int flow = getFlow(i, j);
+                    int capacity = getCapacity(i, j);
 
-                    if (xij < cij)
+                    if (flow < capacity)
                     {
                         Ge.setValue(i, j, getCost(i, j));
                     }
 
-                    if (xij > 0)
+                    if (flow > 0)
                     {
                         Ge.setValue(j, i, -getCost(i, j));
                     }
@@ -290,6 +299,52 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
                     if (xij > 0)
                     {
                         Ge.setValue(j, i, xij);
+                    }
+                }
+            }
+        }
+
+        return Ge;
+    }
+    
+    /**
+     * calcule et retourne le graphe d'écart du graphe courant en prenant en compte les couts
+     * @return le graphe d'écart du graphe courant
+     */
+    public FlowCostGraph getFullResultingNetwork()
+    {
+
+    	FlowCostGraph Ge = new FlowCostGraph(size());
+
+        for (int i = 0; i < size(); i++)
+        {
+            for (int j = 0; j < size(); j++)
+            {
+
+                if (exists(i, j))
+                {
+                    int flow = getFlow(i, j);
+                    int capacity = getCapacity(i, j);
+                    int cost = getCost(i, j);
+
+                    if (flow > 0)
+                    {
+	                	Ge.set(j, i, new FlowCostValues(flow,
+	                									capacity,
+	                									-cost));
+	                    if (flow < capacity)
+	                    {
+	                        Ge.set(i, j, new FlowCostValues(capacity - flow,
+	                        								capacity,
+	                        								cost));
+	                    }
+                    }
+                    else if (flow == 0) 
+                    {
+                        Ge.set(i, j, new FlowCostValues(capacity,
+                        								capacity,
+                        								cost));
+	                    
                     }
                 }
             }
@@ -339,5 +394,18 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
         {
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * crée un graphe orienté valué par un paramètre au lieu des 3
+     * 
+     * @param label 
+     * 				- 0 => graphe des flots
+     * 				- 1 => graphe des capacités
+     * 				- 2 => graphe des coûts
+     * @return
+     */
+    public OrientedValuedGraph getSubGraphBy(int label) {
+    	return new OrientedValuedGraph(this, label);
     }
 }

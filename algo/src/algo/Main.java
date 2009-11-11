@@ -4,8 +4,6 @@ import graphs.FlowCostGraph;
 import graphs.OrientedValuedGraph;
 import graphs.RandomGraphBuilder;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author remi
@@ -60,7 +58,8 @@ public class Main
             builder.setNumVertices(10);
             builder.setDensity(0.4);
             builder.setCapacityUpperBound(5);
-            builder.setCostBound(1);
+            builder.setCostLowerBound(1);
+            builder.setCostUpperBound(15);
             builder.generateRandomFlowGraph().show();
         }
 
@@ -91,16 +90,18 @@ public class Main
 
 
             RandomGraphBuilder builder = new RandomGraphBuilder();
-            builder.setNumVertices(50);
-            builder.setDensity(0.3);
-            builder.setCapacityLowerBound(5);
-            builder.setCapacityUpperBound(20);
-            builder.setCostBound(5);
+            builder.setNumVertices(5);
+            builder.setDensity(0.9);
+            builder.setCapacityLowerBound(1);
+            builder.setCapacityUpperBound(5);
+            builder.setCostLowerBound(1);
+            builder.setCostUpperBound(5);
 
             FlowCostGraph G = builder.generateRandomFlowGraph();
-
+G.show();
             BusackerGowen bg = new BusackerGowen(G);
             bg.runAlgorithm();
+            bg.getG().show();
             System.out.println("Flot = " + bg.getG().getGraphFlow());
             System.out.println("Cout = " + bg.getG().getGraphCost());
 

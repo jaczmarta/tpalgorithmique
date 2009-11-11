@@ -1,8 +1,17 @@
 package graphs;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.Externalizable;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
 
 import values.AbstractValues;
 import values.IValues;
@@ -11,7 +20,7 @@ import values.IValues;
  * représente un graphe quelconque (valué ou non, arcs labellisés par des objets Type)
  * @author remi
  */
-public abstract class AbstractGraph<Type extends AbstractValues>
+public abstract class AbstractGraph<Type extends AbstractValues> implements Serializable, Externalizable
 {
 
     protected IValues[][] values; //matrice des labels des arcs
@@ -43,6 +52,22 @@ public abstract class AbstractGraph<Type extends AbstractValues>
             for (int j = 0; j < size; j++)
             {
                 values[i][j] = noValue();
+            }
+        }
+    }
+    
+    /**
+     * Constructeur par copie
+     * @param g
+     */
+    public AbstractGraph(AbstractGraph g)
+    {
+        values = (Type[][]) new AbstractValues[g.size()][g.size()];
+        for (int i = 0; i < g.size(); i++)
+        {
+            for (int j = 0; j < g.size(); j++)
+            {
+                values[i][j] = g.get(i, j);
             }
         }
     }
@@ -103,7 +128,7 @@ public abstract class AbstractGraph<Type extends AbstractValues>
             checkIndex(i);
             checkIndex(j);
 
-            getValues()[i][j] = v;
+            values[i][j] = v;
 
         } catch (Exception e)
         {
@@ -232,5 +257,60 @@ public abstract class AbstractGraph<Type extends AbstractValues>
             e.printStackTrace();
         }
     }
-}
+    
+	public void serialize(String fileName) throws IOException {
+		OutputStream os = new FileOutputStream(fileName);
+		ObjectOutput oo = new ObjectOutputStream(os);
+		try {
+			oo.writeInt(values.length);
+			oo.writeObject(values);
+		}
+		catch (IOException e) {
+			System.out.println("Probleme a la serialization pour le fichier \""+fileName+"\": "+e.getMessage());
+			e.printStackTrace();
+		}
+		finally {
+			oo.flush();
+			oo.close();
+			os.close();
+		}
+	}
+	
+	public void writeExternal(ObjectOutput out) throws IOException {
+		out.writeInt(values.length);
+		out.writeObject(values);
+	}
+	
+	public void deserialize(String fileName) throws IOException, ClassNotFoundException {
+		InputStream is = null; 
+		ObjectInput oi = null;
+		try {
+			is = new FileInputStream(fileName);
+			oi = new ObjectInputStream(is);;
+		}
+		catch(FileNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("Fichier serialise introuvable!");
+		}
+		try {
 
+			int size = oi.readInt();
+			values = new IValues[size][size];
+			values = (IValues[][]) oi.readObject();
+		}
+		catch (IOException e) {
+			System.out.println("Probleme a la deserialization du fichier \""+fileName+"\": "+e.getMessage());
+			e.printStackTrace();
+		}
+		finally {
+			oi.close();
+			is.close();
+		}
+	}
+	
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		int size = in.readInt();
+		values = new IValues[size][size];
+		values = (IValues[][]) in.readObject();
+	}
+}
