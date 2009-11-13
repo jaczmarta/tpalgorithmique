@@ -408,4 +408,6 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
     public OrientedValuedGraph getSubGraphBy(int label) {
     	return new OrientedValuedGraph(this, label);
     }
+
+    
 }

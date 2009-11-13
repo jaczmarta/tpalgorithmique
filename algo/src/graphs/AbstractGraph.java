@@ -13,6 +13,8 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
+import java.util.ArrayList;
+import java.util.List;
 import values.AbstractValues;
 import values.IValues;
 
@@ -212,6 +214,38 @@ public abstract class AbstractGraph<Type extends AbstractValues> implements Seri
     		j++;
     	}
         return (j == values.length);
+    }
+
+    /**
+     * ensemble Gamma+ de i
+     * @param i sommet de départ
+     * @return la liste des sommets étant extrémité d'un arc partant de i
+     */
+    List<Integer> gammaPlus(int i)
+    {
+        List<Integer> list = new ArrayList<Integer>();
+        for (int k = 0 ; k < size() ; k++) {
+            if (exists(i, k)) {
+                list.add(k);
+            }
+        }
+        return list;
+    }
+
+    /**
+     * ensemble Gamma- de i
+     * @param i sommet de départ
+     * @return la liste des sommets étant extrémité d'un arc allant vers i
+     */
+    List<Integer> gammaMinus(int i)
+    {
+        List<Integer> list = new ArrayList<Integer>();
+        for (int k = 0 ; k < size() ; k++) {
+            if (exists(k, i)) {
+                list.add(k);
+            }
+        }
+        return list;
     }
 
     /**
