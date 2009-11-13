@@ -54,6 +54,7 @@ public class Main
 
         System.out.println("-----------------------------GRAPHE ALEATOIRE---------------------------------");
         {
+            
             RandomGraphBuilder builder = new RandomGraphBuilder();
             builder.setNumVertices(10);
             builder.setDensity(0.4);
@@ -106,5 +107,7 @@ G.show();
             System.out.println("Cout = " + bg.getG().getGraphCost());
 
         }
+ 
     }
+
 }
