@@ -57,7 +57,7 @@ public abstract class AbstractGraph<Type extends AbstractValues> implements Seri
             }
         }
     }
-    
+
     /**
      * Constructeur par copie
      * @param g
@@ -197,22 +197,26 @@ public abstract class AbstractGraph<Type extends AbstractValues> implements Seri
         checkIndex(j);
         return !((AbstractValues) noValue()).equals(get(i, j));
     }
-    
-    public boolean isSink(int i) {
-    	checkIndex(i);
-    	int j = 0;
-    	while ((j < values.length) && (!exists(i, j)) || (i == j)) {
-    		j++;
-    	}
+
+    public boolean isSink(int i)
+    {
+        checkIndex(i);
+        int j = 0;
+        while ((j < values.length) && (!exists(i, j)) || (i == j))
+        {
+            j++;
+        }
         return (j == values.length);
     }
-    
-    public boolean isSource(int i) {
-    	checkIndex(i);
-    	int j = 0;
-    	while ((j < values.length) && (!exists(j, i)) || (i == j)) {
-    		j++;
-    	}
+
+    public boolean isSource(int i)
+    {
+        checkIndex(i);
+        int j = 0;
+        while ((j < values.length) && (!exists(j, i)) || (i == j))
+        {
+            j++;
+        }
         return (j == values.length);
     }
 
@@ -224,8 +228,10 @@ public abstract class AbstractGraph<Type extends AbstractValues> implements Seri
     List<Integer> gammaPlus(int i)
     {
         List<Integer> list = new ArrayList<Integer>();
-        for (int k = 0 ; k < size() ; k++) {
-            if (exists(i, k)) {
+        for (int k = 0; k < size(); k++)
+        {
+            if (exists(i, k))
+            {
                 list.add(k);
             }
         }
@@ -240,8 +246,10 @@ public abstract class AbstractGraph<Type extends AbstractValues> implements Seri
     List<Integer> gammaMinus(int i)
     {
         List<Integer> list = new ArrayList<Integer>();
-        for (int k = 0 ; k < size() ; k++) {
-            if (exists(k, i)) {
+        for (int k = 0; k < size(); k++)
+        {
+            if (exists(k, i))
+            {
                 list.add(k);
             }
         }
@@ -291,60 +299,68 @@ public abstract class AbstractGraph<Type extends AbstractValues> implements Seri
             e.printStackTrace();
         }
     }
-    
-	public void serialize(String fileName) throws IOException {
-		OutputStream os = new FileOutputStream(fileName);
-		ObjectOutput oo = new ObjectOutputStream(os);
-		try {
-			oo.writeInt(values.length);
-			oo.writeObject(values);
-		}
-		catch (IOException e) {
-			System.out.println("Probleme a la serialization pour le fichier \""+fileName+"\": "+e.getMessage());
-			e.printStackTrace();
-		}
-		finally {
-			oo.flush();
-			oo.close();
-			os.close();
-		}
-	}
-	
-	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeInt(values.length);
-		out.writeObject(values);
-	}
-	
-	public void deserialize(String fileName) throws IOException, ClassNotFoundException {
-		InputStream is = null; 
-		ObjectInput oi = null;
-		try {
-			is = new FileInputStream(fileName);
-			oi = new ObjectInputStream(is);;
-		}
-		catch(FileNotFoundException e) {
-			e.printStackTrace();
-			System.out.println("Fichier serialise introuvable!");
-		}
-		try {
 
-			int size = oi.readInt();
-			values = new IValues[size][size];
-			values = (IValues[][]) oi.readObject();
-		}
-		catch (IOException e) {
-			System.out.println("Probleme a la deserialization du fichier \""+fileName+"\": "+e.getMessage());
-			e.printStackTrace();
-		}
-		finally {
-			oi.close();
-			is.close();
-		}
-	}
-	
-	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		int size = in.readInt();
-		values = new IValues[size][size];
-		values = (IValues[][]) in.readObject();
-	}
+    public void serialize(String fileName) throws IOException
+    {
+        OutputStream os = new FileOutputStream(fileName);
+        ObjectOutput oo = new ObjectOutputStream(os);
+        try
+        {
+            oo.writeInt(values.length);
+            oo.writeObject(values);
+        } catch (IOException e)
+        {
+            System.out.println("Probleme a la serialization pour le fichier \"" + fileName + "\": " + e.getMessage());
+            e.printStackTrace();
+        } finally
+        {
+            oo.flush();
+            oo.close();
+            os.close();
+        }
+    }
+
+    public void writeExternal(ObjectOutput out) throws IOException
+    {
+        out.writeInt(values.length);
+        out.writeObject(values);
+    }
+
+    public void deserialize(String fileName) throws IOException, ClassNotFoundException
+    {
+        InputStream is = null;
+        ObjectInput oi = null;
+        try
+        {
+            is = new FileInputStream(fileName);
+            oi = new ObjectInputStream(is);
+            ;
+        } catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+            System.out.println("Fichier serialise introuvable!");
+        }
+        try
+        {
+
+            int size = oi.readInt();
+            values = new IValues[size][size];
+            values = (IValues[][]) oi.readObject();
+        } catch (IOException e)
+        {
+            System.out.println("Probleme a la deserialization du fichier \"" + fileName + "\": " + e.getMessage());
+            e.printStackTrace();
+        } finally
+        {
+            oi.close();
+            is.close();
+        }
+    }
+
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+    {
+        int size = in.readInt();
+        values = new IValues[size][size];
+        values = (IValues[][]) in.readObject();
+    }
 }

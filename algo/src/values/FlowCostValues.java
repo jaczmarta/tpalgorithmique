@@ -143,7 +143,7 @@ public class FlowCostValues extends AbstractValues implements Serializable, Exte
         {
             return false;
         }
-        if (((FlowCostValues) flowValues).getFlow() != getFlow())
+        if ( (((FlowCostValues) flowValues).getFlow() != getFlow()) && (((FlowCostValues) flowValues).getFlow() != 0))
         {
             return false;
         }
