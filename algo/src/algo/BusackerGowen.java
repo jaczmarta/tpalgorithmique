@@ -66,7 +66,7 @@ public class BusackerGowen
 
         do
         {
-            
+
             path = G.getResultingNetworkWithCosts().getShortedPath(G.indexOfSource(), G.indexOfSink());
 
             if (!path.isEmpty())

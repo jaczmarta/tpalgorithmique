@@ -209,7 +209,7 @@ public class FloydWarshall
      * @return la liste des sommets représentant un circuit absorbant, une liste vide si le
      * graphe n'admet pas de circuit absorbant
      */
-    List<Integer> getCircuitWithNegativeCost()
+    public List<Integer> getCircuitWithNegativeCost()
     {
         for (int i = 0; i < delta.length; i++)
         {
@@ -218,14 +218,34 @@ public class FloydWarshall
             if (delta[i][i] < 0)
             {
                 List<Integer> circuit = new ArrayList<Integer>();
-                for (int k = i ; !circuit.contains(k) ; k = P[i][k]) {
+                int k;
+                for (k = i ; (k==i && circuit.size() > 0) ; k = P[i][k])
+                //for (k = i; !circuit.contains(k); k = P[i][k])
+                {
                     circuit.add(k);
                 }
+                
                 Collections.reverse(circuit);
+                if (!check(circuit)) {
+                    System.out.println("BBBBBBBBB!");
+                }
                 return circuit;
             }
         }
         return new ArrayList<Integer>();
 
+    }
+
+    private boolean check( List<Integer> path ) {
+        if (!path.isEmpty()) {
+            int sum = 0;
+            for (int i = 0 ; i < path.size()-1 ; i++) {
+                sum += G.getValue(path.get(i), path.get(i+1));
+            }
+            sum += G.getValue(path.get(path.size()-1), path.get(0));
+            System.out.println(sum);
+            return sum<0;
+        }
+        return true;
     }
 }

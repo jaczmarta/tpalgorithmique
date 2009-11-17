@@ -16,8 +16,7 @@ public class Main
      */
     public static void main(String[] args)
     {
-
-
+/*
         System.out.println("----------------------------- FLOYD - WARSHALL ---------------------------------");
         {
             OrientedValuedGraph G = new OrientedValuedGraph(5);
@@ -70,7 +69,7 @@ public class Main
 
         System.out.println("-----------------------------GRAPHE ALEATOIRE---------------------------------");
         {
-            
+
             RandomGraphBuilder builder = new RandomGraphBuilder();
             builder.setNumVertices(10);
             builder.setDensity(0.4);
@@ -102,8 +101,8 @@ public class Main
             System.out.println("Cout = " + bg.getG().getGraphCost());
         }
 
-        
 
+*/
         System.out.println("-----------------------------ALGO DE BASE FLOTMAXCOUTMIN ---------------------------------");
         {
             //Exemple ex2 feuille td 5
@@ -118,17 +117,27 @@ public class Main
             fg.set(4, 6, 0, 3, 5);
             fg.set(5, 6, 0, 3, 4);
 
-            BasicMaxFlowMinCost bg = new BasicMaxFlowMinCost(fg);
+            
+
+            BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(fg);
+            bmfmc.runAlgorithm();
+            //bmfmc.getG().showWithoutZeros();
+            System.out.println("Basique :");
+            System.out.println("Flot = " + bmfmc.getG().getGraphFlow());
+            System.out.println("Cout = " + bmfmc.getG().getGraphCost());
+
+            BusackerGowen bg = new BusackerGowen(fg);
             bg.runAlgorithm();
-            bg.getG().showWithoutZeros();
+            //bg.getG().show();
+            System.out.println("Busacker et Gowen :");
             System.out.println("Flot = " + bg.getG().getGraphFlow());
             System.out.println("Cout = " + bg.getG().getGraphCost());
         }
 
 
+/*
         System.out.println("-----------------------------BUSACKER ET GOWEN SUR GRAPHE ALEATOIRE ---------------------------------");
         {
-
 
             RandomGraphBuilder builder = new RandomGraphBuilder();
             builder.setNumVertices(5);
@@ -139,15 +148,66 @@ public class Main
             builder.setCostUpperBound(5);
 
             FlowCostGraph G = builder.generateRandomFlowGraph();
-G.show();
+            G.show();
+
+
             BusackerGowen bg = new BusackerGowen(G);
             bg.runAlgorithm();
-            bg.getG().show();
+            //bg.getG().show();
+            System.out.println("Busacker et Gowen :");
             System.out.println("Flot = " + bg.getG().getGraphFlow());
             System.out.println("Cout = " + bg.getG().getGraphCost());
 
+            BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
+            bmfmc.runAlgorithm();
+            //bmfmc.getG().showWithoutZeros();
+            System.out.println("Basique :");
+            System.out.println("Flot = " + bmfmc.getG().getGraphFlow());
+            System.out.println("Cout = " + bmfmc.getG().getGraphCost());
+
         }
  
+*//*
+        
+        System.out.println("----------------------------- TEST DES DEUX ALGOS ---------------------------------");
+        {
+            int nbTests = 100000000;
+            int cpt = 0;
+
+            while( cpt < nbTests ) {
+                cpt++;
+                
+                RandomGraphBuilder builder = new RandomGraphBuilder();
+                builder.setNumVertices(RandomGraphBuilder.generateInteger(5, 30));
+                builder.setDensity(Math.random()/2+0.5);
+                builder.setCapacityLowerBound(2);
+                builder.setCapacityUpperBound(8);
+                builder.setCostLowerBound(2);
+                builder.setCostUpperBound(8);
+
+                FlowCostGraph G = builder.generateRandomFlowGraph();
+                
+                
+
+                BusackerGowen bg = new BusackerGowen(G);
+                bg.runAlgorithm();
+
+                BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
+                bmfmc.runAlgorithm();
+
+                boolean testFlot = ( bg.getG().getGraphFlow() == bmfmc.getG().getGraphFlow() ) ;
+                boolean testCout = ( bg.getG().getGraphCost() == bmfmc.getG().getGraphCost() ) ;
+
+                if ( !testFlot || !testCout ) {
+                    System.err.println("AAAAAAAAAAAAAH");
+                    System.exit(-1);
+                }
+            }
+
+        }
+*/
+         
+
     }
 
 }

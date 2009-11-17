@@ -37,7 +37,6 @@ public class BasicMaxFlowMinCost
             if (!circuitWithNegativeCost.isEmpty())
             {
                 updateFLow(circuitWithNegativeCost);
-                System.out.println("updateFlow()");
             }
         } while (!circuitWithNegativeCost.isEmpty());
 
@@ -90,11 +89,13 @@ public class BasicMaxFlowMinCost
     {
         int delta = getPossibleAugmentation(path);
 
-        for (int k = 0; k < path.size() - 1; k++)
+        for (int k = 0; k < path.size() ; k++)
         {
             int i = path.get(k);
-            int j = path.get(k + 1);
-
+            //on augmente le flot sur tout le circuit => aussi sur l'arc (dernier_du_circuit, premier_du_circuit)
+            int j = (k + 1 < path.size() ? path.get(k + 1) : path.get(0));
+            //int j = path.get(k + 1);
+            
             if (G.exists(i, j))
             {
                 G.addFlow(i, j, delta);
@@ -107,7 +108,7 @@ public class BasicMaxFlowMinCost
                 System.exit(-1);
             }
         }
-        
+
     }
 
     /**
@@ -149,7 +150,5 @@ public class BasicMaxFlowMinCost
      */
     private void updateFlow(List<Integer> path, int delta)
     {
-        
-
     }
 } 
