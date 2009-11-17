@@ -34,6 +34,22 @@ public class Main
             fw.showDelta();
         }
 
+        System.out.println("----------------------------- FLOYD - WARSHALL CIRCUIT ABSORBANT ---------------------------------");
+        {
+            OrientedValuedGraph G = new OrientedValuedGraph(6);
+            G.setValue(0, 1, 3);
+            G.setValue(1, 2, -1);
+            G.setValue(1, 5, 3);
+            G.setValue(2, 3, -2);
+            G.setValue(3, 4, 1);
+            G.setValue(4, 1, -3);
+
+            FloydWarshall fw = new FloydWarshall(G);
+            fw.runAlgorithm();
+            //fw.showP();
+            System.out.println(fw.getCircuitWithNegativeCost());
+        }
+
         System.out.println("-----------------------------GRAPHE D'ECART ---------------------------------");
         {
             //Exemple ex1 feuille td 2
@@ -85,6 +101,30 @@ public class Main
             System.out.println("Flot = " + bg.getG().getGraphFlow());
             System.out.println("Cout = " + bg.getG().getGraphCost());
         }
+
+        
+
+        System.out.println("-----------------------------ALGO DE BASE FLOTMAXCOUTMIN ---------------------------------");
+        {
+            //Exemple ex2 feuille td 5
+            FlowCostGraph fg = new FlowCostGraph(7);
+            fg.set(0, 1, 0, 5, 4);
+            fg.set(0, 2, 0, 8, 2);
+            fg.set(1, 3, 0, 4, 8);
+            fg.set(1, 4, 0, 2, 5);
+            fg.set(2, 4, 0, 5, 2);
+            fg.set(2, 5, 0, 2, 6);
+            fg.set(3, 6, 0, 7, 3);
+            fg.set(4, 6, 0, 3, 5);
+            fg.set(5, 6, 0, 3, 4);
+
+            BasicMaxFlowMinCost bg = new BasicMaxFlowMinCost(fg);
+            bg.runAlgorithm();
+            bg.getG().showWithoutZeros();
+            System.out.println("Flot = " + bg.getG().getGraphFlow());
+            System.out.println("Cout = " + bg.getG().getGraphCost());
+        }
+
 
         System.out.println("-----------------------------BUSACKER ET GOWEN SUR GRAPHE ALEATOIRE ---------------------------------");
         {

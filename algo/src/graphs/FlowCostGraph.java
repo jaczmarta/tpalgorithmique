@@ -26,7 +26,7 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
     {
         super(size);
     }
-    
+
     /**
      * Constructeur par copie
      * @param g
@@ -306,7 +306,7 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
 
         return Ge;
     }
-    
+
     /**
      * calcule et retourne le graphe d'écart du graphe courant en prenant en compte les couts
      * @return le graphe d'écart du graphe courant
@@ -314,7 +314,7 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
     public FlowCostGraph getFullResultingNetwork()
     {
 
-    	FlowCostGraph Ge = new FlowCostGraph(size());
+        FlowCostGraph Ge = new FlowCostGraph(size());
 
         for (int i = 0; i < size(); i++)
         {
@@ -329,22 +329,21 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
 
                     if (flow > 0)
                     {
-	                	Ge.set(j, i, new FlowCostValues(flow,
-	                									capacity,
-	                									-cost));
-	                    if (flow < capacity)
-	                    {
-	                        Ge.set(i, j, new FlowCostValues(capacity - flow,
-	                        								capacity,
-	                        								cost));
-	                    }
-                    }
-                    else if (flow == 0) 
+                        Ge.set(j, i, new FlowCostValues(flow,
+                                capacity,
+                                -cost));
+                        if (flow < capacity)
+                        {
+                            Ge.set(i, j, new FlowCostValues(capacity - flow,
+                                    capacity,
+                                    cost));
+                        }
+                    } else if (flow == 0)
                     {
                         Ge.set(i, j, new FlowCostValues(capacity,
-                        								capacity,
-                        								cost));
-	                    
+                                capacity,
+                                cost));
+
                     }
                 }
             }
@@ -395,7 +394,7 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
             e.printStackTrace();
         }
     }
-    
+
     /**
      * crée un graphe orienté valué par un paramètre au lieu des 3
      * 
@@ -405,9 +404,8 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
      * 				- 2 => graphe des coûts
      * @return
      */
-    public OrientedValuedGraph getSubGraphBy(int label) {
-    	return new OrientedValuedGraph(this, label);
+    public OrientedValuedGraph getSubGraphBy(int label)
+    {
+        return new OrientedValuedGraph(this, label);
     }
-
-    
 }
