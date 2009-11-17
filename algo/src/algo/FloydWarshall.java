@@ -1,8 +1,11 @@
 package algo;
 
+import java.util.List;
 import values.FlowCostValues;
 import values.IValues;
 import graphs.OrientedValuedGraph;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * algorithme de Floyd Warshall calculant les plus courts chemins entre toutes les paires de sommets
@@ -11,6 +14,7 @@ import graphs.OrientedValuedGraph;
 public class FloydWarshall
 {
     //matrice delta des chemins les plus courts
+
     private int[][] delta;
     //matrice du routage :
     //P[i][j] contient le sommet précédent j sur un plus court chemin de i à j
@@ -84,7 +88,7 @@ public class FloydWarshall
 
     }
 
-    public void initDeltaAndP()
+    private void initDeltaAndP()
     {
         for (int i = 0; i < G.size(); i++)
         {
@@ -198,5 +202,30 @@ public class FloydWarshall
         {
             return (a < b + c ? a : b + c);
         }
+    }
+
+    /**
+     * cherche la présence d'un circuit absorbant dans le graphe
+     * @return la liste des sommets représentant un circuit absorbant, une liste vide si le
+     * graphe n'admet pas de circuit absorbant
+     */
+    List<Integer> getCircuitWithNegativeCost()
+    {
+        for (int i = 0; i < delta.length; i++)
+        {
+
+            //circuit absorbant <=> il existe i tel que delta[i][i] < 0
+            if (delta[i][i] < 0)
+            {
+                List<Integer> circuit = new ArrayList<Integer>();
+                for (int k = i ; !circuit.contains(k) ; k = P[i][k]) {
+                    circuit.add(k);
+                }
+                Collections.reverse(circuit);
+                return circuit;
+            }
+        }
+        return new ArrayList<Integer>();
+
     }
 }

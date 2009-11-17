@@ -1,28 +1,55 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package algo;
 
 import graphs.FlowCostGraph;
-import graphs.OrientedValuedGraph;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * algorithme de Busacker et Gowen recherchant le flot max de cout min dans un réseau de flots
- * On cherche le chemin de s à t de cout min dans le graphe d'ecart pour augmenter le flot.
+ * Classe implémentant l'algorithme de Ford Fulkerson cherchant un flot max dans un graphe.
  * @author Rémi
  */
-public class BusackerGowen
+public class FordFulkerson
 {
 
     private FlowCostGraph G;
 
     /**
-     * constructeur
-     * @param G le graphe sur lequel on veut appliquer l'algorithme
+     * constructeur par paramètre
+     * @param G le graphe sur lequel va s'effectuer l'algorithme
      */
-    public BusackerGowen(FlowCostGraph G)
+    public FordFulkerson(FlowCostGraph G)
     {
-        setG(G);
+        //copie en profondeur
+        this.G = new FlowCostGraph(G);
+    }
+
+    /**
+     * lance l'algorithme et retourne le graphe de flots avec le flot max
+     * @return le graphe de flots avec le flot max
+     */
+    public FlowCostGraph getMaxFlow()
+    {
+
+        initFlow();
+
+        List<Integer> chaineAmeliorante;
+
+        do
+        {
+            chaineAmeliorante = G.getResultingNetwork().getShortedPath(G.indexOfSource(), G.indexOfSink());
+            if (!chaineAmeliorante.isEmpty())
+            {
+                int delta = getPossibleAugmentation(chaineAmeliorante);
+                updateFlow(chaineAmeliorante, delta);
+
+            }
+        } while (!chaineAmeliorante.isEmpty());
+
+
+        return this.G;
     }
 
     /**
@@ -42,42 +69,17 @@ public class BusackerGowen
     }
 
     /**
-     * lance l'algorithme de Busacker et Gowen
+     * initialisation du flot à 0
      */
-    public void runAlgorithm()
+    private void initFlow()
     {
-        int wantedFlow = Integer.MAX_VALUE / 10;
-
-        //initialisation du flot à zéro
-        int T = G.size();
-        for (int i = 0; i < T; i++)
+        for (int i = 0; i < G.size(); i++)
         {
-            for (int j = 0; j < T; j++)
+            for (int j = 0; j < G.size(); j++)
             {
-                if (G.exists(i, j))
-                {
-                    G.setFlow(i, j, 0);
-                }
-
+                G.setFlow(i, j, 0);
             }
         }
-
-        List<Integer> path = new ArrayList<Integer>();
-
-        do
-        {
-            
-            path = G.getResultingNetworkWithCosts().getShortedPath(G.indexOfSource(), G.indexOfSink());
-
-            if (!path.isEmpty())
-            {
-                int delta = getPossibleAugmentation(path);
-                updateFlow(path, delta);
-            }
-
-        } while (!path.isEmpty() && (wantedFlow != G.getGraphFlow()));
-
-
     }
 
     /**
@@ -101,7 +103,7 @@ public class BusackerGowen
                 v = G.getFlow(j, i);
             } else
             {
-                System.err.println("BusackerGowen::getPossibleAugmentation : invalid edge (" + i + ", " + j + ")");
+                System.err.println("FordFulkerson::getPossibleAugmentation : invalid edge (" + i + ", " + j + ")");
                 System.exit(-1);
             }
 
@@ -132,7 +134,7 @@ public class BusackerGowen
                 G.addFlow(j, i, -delta);
             } else
             {
-                System.err.println("BusackerGowen::updateFlow : invalid edge (" + i + ", " + j + ")");
+                System.err.println("FordFulkerson::updateFlow : invalid edge (" + i + ", " + j + ")");
                 System.exit(-1);
             }
         }
