@@ -22,7 +22,7 @@ public class BusackerGowen
      */
     public BusackerGowen(FlowCostGraph G)
     {
-        setG(G);
+    	this.G = new FlowCostGraph(G);
     }
 
     /**
@@ -38,7 +38,7 @@ public class BusackerGowen
      */
     public void setG(FlowCostGraph G)
     {
-        this.G = G;
+        this.G = new FlowCostGraph(G);
     }
 
     /**
@@ -67,7 +67,7 @@ public class BusackerGowen
         do
         {
 
-            path = G.getResultingNetworkWithCosts().getShortedPath(G.indexOfSource(), G.indexOfSink());
+            path = G.getResultingNetworkWithCosts().getShortestPath(G.indexOfSource(), G.indexOfSink());
 
             if (!path.isEmpty())
             {

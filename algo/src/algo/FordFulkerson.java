@@ -7,6 +7,8 @@ package algo;
 import graphs.FlowCostGraph;
 import java.util.List;
 
+import values.IValues;
+
 /**
  * Classe implémentant l'algorithme de Ford Fulkerson cherchant un flot max dans un graphe.
  * @author Rémi
@@ -30,23 +32,22 @@ public class FordFulkerson
      * lance l'algorithme et retourne le graphe de flots avec le flot max
      * @return le graphe de flots avec le flot max
      */
-    public FlowCostGraph getMaxFlow()
+    public FlowCostGraph getMaxFlowGraph()
     {
 
         initFlow();
-
-        List<Integer> chaineAmeliorante;
+        List<Integer> betterChain;
 
         do
         {
-            chaineAmeliorante = G.getResultingNetwork().getShortedPath(G.indexOfSource(), G.indexOfSink());
-            if (!chaineAmeliorante.isEmpty())
+        	betterChain = G.getResultingNetwork().getShortestPath(G.indexOfSource(), G.indexOfSink());
+            if (!betterChain.isEmpty())
             {
-                int delta = getPossibleAugmentation(chaineAmeliorante);
-                updateFlow(chaineAmeliorante, delta);
+                int delta = BasicMaxFlowMinCost.getPossibleIncrease(G, betterChain);
+                updateFlow(betterChain, delta);
 
             }
-        } while (!chaineAmeliorante.isEmpty());
+        } while (!betterChain.isEmpty());
 
 
         return this.G;
@@ -65,7 +66,7 @@ public class FordFulkerson
      */
     public void setG(FlowCostGraph G)
     {
-        this.G = G;
+        this.G = new FlowCostGraph(G);
     }
 
     /**
@@ -80,40 +81,6 @@ public class FordFulkerson
                 G.setFlow(i, j, 0);
             }
         }
-    }
-
-    /**
-     * calcule l'augmentation possible de flot pour un chemin augmentant
-     */
-    private int getPossibleAugmentation(List<Integer> path)
-    {
-        int min = Integer.MAX_VALUE;
-
-        int v = 0;
-        for (int k = 0; k < path.size() - 1; k++)
-        {
-            int i = path.get(k);
-            int j = path.get(k + 1);
-
-            if (G.exists(i, j))
-            {
-                v = G.getCapacity(i, j) - G.getFlow(i, j);
-            } else if (G.exists(j, i))
-            {
-                v = G.getFlow(j, i);
-            } else
-            {
-                System.err.println("FordFulkerson::getPossibleAugmentation : invalid edge (" + i + ", " + j + ")");
-                System.exit(-1);
-            }
-
-            if (v < min)
-            {
-                min = v;
-            }
-        }
-
-        return min;
     }
 
     /**

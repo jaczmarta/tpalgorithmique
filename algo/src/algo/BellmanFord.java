@@ -28,7 +28,6 @@ public class BellmanFord
     private int[] routage;
     //variables utilisées dans l'algo
     private int[] oldDistances;
-    private boolean stable;
 
     /**
      * constructeur
@@ -40,15 +39,7 @@ public class BellmanFord
         setG(G);
         setSource(source);
 
-        distances = new int[G.size()];
-        oldDistances = new int[G.size()];
-
-        routage = new int[G.size()];
-
         init();
-
-        stable = false;
-
     }
 
     /**
@@ -56,12 +47,15 @@ public class BellmanFord
      */
     private void init()
     {
-
+        distances 		= new int[G.size()];
+        oldDistances 	= new int[G.size()];
+        routage 		= new int[G.size()];
+        
         for (int i = 0; i < getG().size(); i++)
         {
-            distances[i] = getG().getValue(getSource(), i);
+            distances[i] 	= getG().getValue(getSource(), i);
             oldDistances[i] = distances[i];
-            routage[i] = getSource();
+            routage[i] 		= getSource();
         }
     }
 
@@ -71,13 +65,11 @@ public class BellmanFord
     public void runAlgorithm()
     {
         int k = 0;
+        int tmpDist = 0;
 
-        int cout = 0;
-
-        while ((!stable) && k < G.size())
+        while (k < G.size())
         {
             k++;
-            stable = true;
 
             for (int i = 0; i < distances.length; i++)
             {
@@ -90,12 +82,11 @@ public class BellmanFord
                 {
                     if (G.exists(j, i))
                     {
-                        cout = oldDistances[j] + G.getValue(j, i);
-                        if (cout < distances[i])
+                    	tmpDist = oldDistances[j] + G.getValue(j, i);
+                        if (tmpDist < distances[i])
                         {
-                            distances[i] = cout;
+                            distances[i] = tmpDist;
                             routage[i] = j;
-                            stable = false;
                         }
                     }
                 }

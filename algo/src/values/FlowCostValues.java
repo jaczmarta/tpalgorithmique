@@ -183,4 +183,9 @@ public class FlowCostValues extends AbstractValues implements Serializable, Exte
 		
 	}
 
+	@Override
+	public AbstractValues get() {
+		return new FlowCostValues(this);
+	}
+
 }
