@@ -87,4 +87,9 @@ public class IntValues extends AbstractValues implements Serializable, Externali
 		out.writeInt(value);
 		
 	}
+
+	@Override
+	public AbstractValues get() {
+		return new IntValues(value);
+	}
 }

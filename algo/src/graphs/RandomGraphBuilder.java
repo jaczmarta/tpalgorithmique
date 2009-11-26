@@ -97,7 +97,7 @@ public class RandomGraphBuilder
             {
                 int a = randomPath.get(n);
                 int b = randomPath.get(n + 1);
-                if (!G.exists(a, b) && !G.exists(b, a))
+                if ((!G.exists(a, b) && !G.exists(b, a)))
                 {
                     G.set(a, b, getRandomValues());
                     edgesCounter++;

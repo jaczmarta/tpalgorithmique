@@ -69,7 +69,7 @@ public abstract class AbstractGraph<Type extends AbstractValues> implements Seri
         {
             for (int j = 0; j < g.size(); j++)
             {
-                values[i][j] = g.get(i, j);
+                values[i][j] = g.values[i][j].get();
             }
         }
     }

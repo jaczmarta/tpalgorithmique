@@ -12,4 +12,5 @@ public interface IValues
 {
 	public static final int infinity = Integer.MAX_VALUE / 10;
     public boolean equals(IValues ivalue);
+    public AbstractValues get();
 }

@@ -140,14 +140,14 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
     }
 
     /**
-     * getShortedPath
+     * getShortestPath
      * retourne le chemin le plus court entre le sommet i et le sommet j
      * a l'aide de l'algorithme de Bellman-ford
      * @param i point d'entrée de l'arc
      * @param j point de sortie de l'arc
      * @return chemin le plus court entre le sommet i et le sommet j
      */
-    public List<Integer> getShortedPath(int i, int j)
+    public List<Integer> getShortestPath(int i, int j)
     {
 
         List<Integer> shortedPath = new ArrayList<Integer>();

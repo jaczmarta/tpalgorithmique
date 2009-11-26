@@ -7,6 +7,8 @@ package algo;
 import graphs.FlowCostGraph;
 import java.util.List;
 
+import values.IValues;
+
 /**
  * algorithme de base pour chercher le flot max de cout min dans un graphe de flot avec des couts
  * La méthode consiste a chercher un flot max puis de reduire le cout en eliminant les cycles de cout
@@ -20,28 +22,109 @@ public class BasicMaxFlowMinCost
 
     public BasicMaxFlowMinCost(FlowCostGraph G)
     {
-        setG(G);
+    	this.G = new FlowCostGraph(G);
     }
 
     public void runAlgorithm()
     {
 
         buildFlow();
+        List<Integer> circuitWithNegativeCost = getCircuitWithNegativeCost();
 
-        List<Integer> circuitWithNegativeCost;
-
-        do
+        while (!circuitWithNegativeCost.isEmpty())
         {
+//        	System.out.println("dans bmfmc");
+//        	for (int j = 0; j < circuitWithNegativeCost.size(); j++) {
+//            	System.out.print(circuitWithNegativeCost.get(j)+" ");
+//            }
+//        	System.out.println();
+        	
+            updateFLow(circuitWithNegativeCost);
             circuitWithNegativeCost = getCircuitWithNegativeCost();
-
-            if (!circuitWithNegativeCost.isEmpty())
-            {
-                updateFLow(circuitWithNegativeCost);
-            }
-        } while (!circuitWithNegativeCost.isEmpty());
+        }
 
     }
 
+
+    /**
+     * construit un flot de départ à l'aide de l'algorithme de Ford-Fulkerson
+     */
+    private void buildFlow()
+    {
+        FordFulkerson ff = new FordFulkerson(G);
+        G = ff.getMaxFlowGraph();
+    }
+
+    /**
+     * cherche un circuit de cout negatif à l'aide de l'algorithme de Warshall-Floyd
+     * @return une liste des sommets représentant un circuit à cout négatif
+     */
+    private List<Integer> getCircuitWithNegativeCost()
+    {
+
+        FloydWarshall fw = new FloydWarshall(G.getResultingNetworkWithCosts());
+        fw.runAlgorithm();
+        return fw.getCircuitWithNegativeCost();
+
+    }
+
+    /**
+     * augmente le flot de manière à faire disparaitre le circuit
+     * @param path un circuit à cout négatif
+     */
+    private void updateFLow(List<Integer> path)
+    {
+        int delta = getPossibleIncrease(G, path);
+//        System.out.println("augmentation:"+delta);
+        for (int k = 0; k < path.size() -1; k++)
+        {
+            int i = path.get(k);
+            
+            //on augmente le flot sur tout le circuit => aussi sur l'arc (dernier_du_circuit, premier_du_circuit)
+            //int j = (k + 1 < path.size() ? path.get(k + 1) : path.get(0));
+            int j = path.get(k + 1);
+            if (G.exists(i, j)) {
+                G.addFlow(i, j, delta);
+            } 
+            else if (G.exists(j, i)) {
+                G.addFlow(j, i, -delta);
+            } 
+            else {
+                System.err.println("BasicMaxFlowMinCost::updateFlow : invalid edge (" + i + ", " + j + ")");
+                System.exit(-1);
+            }
+        }
+
+    }
+
+    /**
+     * calcule l'augmentation possible de flot pour un chemin augmentant
+     */
+    public static int getPossibleIncrease(FlowCostGraph graph, List<Integer> path)
+    {
+        int increase = 0;
+        int increaseMax = IValues.infinity;
+        for (int k = 0; k < path.size() - 1; k++)
+        {
+            int i = path.get(k);
+            int j = path.get(k + 1);
+            
+            if (graph.exists(i, j)) {
+            	increase = graph.getCapacity(i, j) - graph.getFlow(i, j);
+            }
+            else if (graph.exists(j, i)) {
+            	increase = graph.getFlow(j, i);
+            }
+            else {
+                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ")");
+                System.exit(-1);
+            }
+            increaseMax = Math.min(increaseMax, increase);
+            
+        }
+        return increaseMax;
+    }
+    
     /**
      * @return the G
      */
@@ -55,100 +138,6 @@ public class BasicMaxFlowMinCost
      */
     public void setG(FlowCostGraph G)
     {
-        this.G = G;
-    }
-
-    /**
-     * construit un flot de départ à l'aide de l'algorithme de Ford-Fulkerson
-     */
-    private void buildFlow()
-    {
-        FordFulkerson ff = new FordFulkerson(G);
-        G = ff.getMaxFlow();
-    }
-
-    /**
-     * cherche un circuit de cout negatif à l'aide de l'algorithme de Warshall-Floyd
-     * @return une liste des sommets représentant un circuit à cout négatif
-     */
-    private List<Integer> getCircuitWithNegativeCost()
-    {
-
-        FloydWarshall fw = new FloydWarshall(G.getResultingNetworkWithCosts());
-        fw.runAlgorithm();
-
-        return fw.getCircuitWithNegativeCost();
-
-    }
-
-    /**
-     * augmente le flot de manière à faire disparaitre le circuit
-     * @param path un circuit à cout négatif
-     */
-    private void updateFLow(List<Integer> path)
-    {
-        int delta = getPossibleAugmentation(path);
-
-        for (int k = 0; k < path.size() ; k++)
-        {
-            int i = path.get(k);
-            //on augmente le flot sur tout le circuit => aussi sur l'arc (dernier_du_circuit, premier_du_circuit)
-            int j = (k + 1 < path.size() ? path.get(k + 1) : path.get(0));
-            //int j = path.get(k + 1);
-            
-            if (G.exists(i, j))
-            {
-                G.addFlow(i, j, delta);
-            } else if (G.exists(j, i))
-            {
-                G.addFlow(j, i, -delta);
-            } else
-            {
-                System.err.println("BasicMaxFlowMinCost::updateFlow : invalid edge (" + i + ", " + j + ")");
-                System.exit(-1);
-            }
-        }
-
-    }
-
-    /**
-     * calcule l'augmentation possible de flot pour un chemin augmentant
-     */
-    private int getPossibleAugmentation(List<Integer> path)
-    {
-        int min = Integer.MAX_VALUE;
-
-        int v = 0;
-        for (int k = 0; k < path.size() - 1; k++)
-        {
-            int i = path.get(k);
-            int j = path.get(k + 1);
-
-            if (G.exists(i, j))
-            {
-                v = G.getCapacity(i, j) - G.getFlow(i, j);
-            } else if (G.exists(j, i))
-            {
-                v = G.getFlow(j, i);
-            } else
-            {
-                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ")");
-                System.exit(-1);
-            }
-
-            if (v < min)
-            {
-                min = v;
-            }
-        }
-
-        return min;
-    }
-
-    /**
-     * met à jour le flot selon l'augmentation sur un chemin
-     */
-    private void updateFlow(List<Integer> path, int delta)
-    {
+        this.G = new FlowCostGraph(G);
     }
 } 
