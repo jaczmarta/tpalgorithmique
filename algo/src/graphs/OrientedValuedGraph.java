@@ -40,7 +40,7 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
     {
     	super(g);
     }
-    
+
     /**
      * Constructeur par copie sur un graphe de flot/capacité/cout
      * @param g
@@ -67,7 +67,7 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
             }
         }
     }
-    
+
     /**
      * constructeur par matrice d'adjacence
      * @param costValues la matrice d'adjacence du graphe
@@ -170,5 +170,5 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
 
         return shortedPath;
     }
-    
+
 }

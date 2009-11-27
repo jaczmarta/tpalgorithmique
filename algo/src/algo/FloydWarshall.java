@@ -26,7 +26,7 @@ public class FloydWarshall
      */
     public FloydWarshall()
     {
-    	absorbingCircuit = false;
+        absorbingCircuit = false;
         delta = new int[0][0];
         P = new int[0][0];
         G = new OrientedValuedGraph();
@@ -38,7 +38,7 @@ public class FloydWarshall
      */
     public FloydWarshall(OrientedValuedGraph G)
     {
-    	absorbingCircuit = false;
+        absorbingCircuit = false;
         this.G = G;
         int size = G.size();
         delta = new int[size][size];
@@ -84,9 +84,10 @@ public class FloydWarshall
                         P[i][j] = P[k][j];
                     }
                     delta[i][j] = min(delta[i][j], delta[i][k], delta[k][j]);
-                    
-                    if ((i == j) && (delta[i][j] < 0)) {
-                    	absorbingCircuit = true;
+
+                    if ((i == j) && (delta[i][j] < 0))
+                    {
+                        absorbingCircuit = true;
                     }
                 }
             }
@@ -182,11 +183,10 @@ public class FloydWarshall
         if (i == j)
         {
             return "" + j;
-        } 
-//        else if (P[i][j] == i)
-//        {
-//            return "Pas de chemin de " + i + " a " + j;
-//        }
+        } //        else if (P[i][j] == i)
+        //        {
+        //            return "Pas de chemin de " + i + " a " + j;
+        //        }
         else
         {
             return getPath(i, P[i][j]) + " -> " + j;
@@ -219,53 +219,71 @@ public class FloydWarshall
      */
     public List<Integer> getCircuitWithNegativeCost()
     {
-    	if (this.hasAbsorbingCircuit()) {
-	        for (int i = 0; i < delta.length; i++)
-	        {
-	
-	            //circuit absorbant <=> il existe i tel que delta[i][i] < 0 (ou P[i][i] != i)
-	            if (delta[i][i] < 0)
-	            {
-	            	//cout du circuit absorbant
-	            	int sum = 0;
-	            	
-	            	//circuit absorbant
-	                List<Integer> circuit = new ArrayList<Integer>();
-	                
-	                //sommets du circuit
-	                int j = i;
-	                int k = P[i][i];
-	                
-	                //on ajoute l'origine du circuit
-                    circuit.add(i);
-                    
-                    boolean end = false;
-	                while (end == false) {
-	                	
-	                	//ajout du sommet précédent j sur un chemin de i à k
-	                	circuit.add(k);
-	                	
-	                	//court du circuit incrémenté du cout de l'arc ajouté
-	                	sum += G.getValue(k, j);
-	                	
-	                	//arc suivant
-	                	j = k;
-	                	k = P[i][k];
-	                	
-	                	//arrêt: si il existe un arc de i à j (anciennement k) qui fait que le circuit est absorbant
-	                	end = (sum + G.getValue(i, j) < 0);
-	                }
-	                circuit.add(i);  
-	                Collections.reverse(circuit);
-	                return circuit;
-	            }
-	        }
-    	}
+        if (this.hasAbsorbingCircuit())
+        {
+            for (int i = 0; i < delta.length; i++)
+            {
+
+                //circuit absorbant <=> il existe i tel que delta[i][i] < 0 (ou P[i][i] != i)
+                if (delta[i][i] < 0)
+                {
+                    /* A COMMENTER */
+                    List<Integer> pile1 = new ArrayList<Integer>();
+                    List<Integer> pile2 = new ArrayList<Integer>();
+
+                    int first = i;
+
+                    pile1.add(i);
+                    i = P[i][i];
+                    while (!pile2.contains(i))
+                    {
+                        if (pile1.contains(i))
+                        {
+                            pile2.add(i);
+                        }
+                        pile1.add(i);
+
+                        i = P[i][i];
+                    }
+
+                    Collections.reverse(pile2);
+
+                    if (pile2.size() > 2)
+                    { //ce if est moche
+                        checkCircuit(pile2);
+                        return pile2;
+                    }
+                }
+            }
+        }
         return new ArrayList<Integer>();
 
     }
-    
-    public boolean hasAbsorbingCircuit() {
-    	return absorbingCircuit;
+
+    private void checkCircuit(List<Integer> circuit)
+    {
+        int sum = 0;
+        for (int i = 0; i < circuit.size(); i++)
+        {
+            int a = circuit.get(i);
+            int b = circuit.get((i + 1) % circuit.size());
+
+            if (!G.exists(a, b))
+            {
+                System.err.println("arc n'existe pas");
+                break;
+            }
+            sum += G.getValue(a, b);
+
+        }
+        if (sum >= 0)
+        {
+            System.err.println("sum <= 0");
+        }
+    }
+
+    public boolean hasAbsorbingCircuit()
+    {
+        return absorbingCircuit;
     }
 }

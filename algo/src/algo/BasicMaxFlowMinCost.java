@@ -22,7 +22,7 @@ public class BasicMaxFlowMinCost
 
     public BasicMaxFlowMinCost(FlowCostGraph G)
     {
-    	this.G = new FlowCostGraph(G);
+        this.G = new FlowCostGraph(G);
     }
 
     public void runAlgorithm()
@@ -33,18 +33,13 @@ public class BasicMaxFlowMinCost
 
         while (!circuitWithNegativeCost.isEmpty())
         {
-//        	System.out.println("dans bmfmc");
-//        	for (int j = 0; j < circuitWithNegativeCost.size(); j++) {
-//            	System.out.print(circuitWithNegativeCost.get(j)+" ");
-//            }
-//        	System.out.println();
-        	
             updateFLow(circuitWithNegativeCost);
             circuitWithNegativeCost = getCircuitWithNegativeCost();
         }
 
-    }
+        G.checkFlow();
 
+    }
 
     /**
      * construit un flot de départ à l'aide de l'algorithme de Ford-Fulkerson
@@ -74,22 +69,22 @@ public class BasicMaxFlowMinCost
      */
     private void updateFLow(List<Integer> path)
     {
-        int delta = getPossibleIncrease(G, path);
-//        System.out.println("augmentation:"+delta);
-        for (int k = 0; k < path.size() -1; k++)
+        int delta = 1;
+
+        for (int k = 0; k < path.size(); k++)
         {
             int i = path.get(k);
-            
             //on augmente le flot sur tout le circuit => aussi sur l'arc (dernier_du_circuit, premier_du_circuit)
-            //int j = (k + 1 < path.size() ? path.get(k + 1) : path.get(0));
-            int j = path.get(k + 1);
-            if (G.exists(i, j)) {
+            int j = path.get((k + 1) % path.size());
+
+            if (G.exists(i, j))
+            {
                 G.addFlow(i, j, delta);
-            } 
-            else if (G.exists(j, i)) {
+            } else if (G.exists(j, i))
+            {
                 G.addFlow(j, i, -delta);
-            } 
-            else {
+            } else
+            {
                 System.err.println("BasicMaxFlowMinCost::updateFlow : invalid edge (" + i + ", " + j + ")");
                 System.exit(-1);
             }
@@ -108,23 +103,24 @@ public class BasicMaxFlowMinCost
         {
             int i = path.get(k);
             int j = path.get(k + 1);
-            
-            if (graph.exists(i, j)) {
-            	increase = graph.getCapacity(i, j) - graph.getFlow(i, j);
-            }
-            else if (graph.exists(j, i)) {
-            	increase = graph.getFlow(j, i);
-            }
-            else {
+
+            if (graph.exists(i, j))
+            {
+                increase = graph.getCapacity(i, j) - graph.getFlow(i, j);
+            } else if (graph.exists(j, i))
+            {
+                increase = graph.getFlow(j, i);
+            } else
+            {
                 System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ")");
                 System.exit(-1);
             }
             increaseMax = Math.min(increaseMax, increase);
-            
+
         }
         return increaseMax;
     }
-    
+
     /**
      * @return the G
      */
@@ -140,4 +136,4 @@ public class BasicMaxFlowMinCost
     {
         this.G = new FlowCostGraph(G);
     }
-} 
+}
