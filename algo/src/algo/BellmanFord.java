@@ -50,7 +50,7 @@ public class BellmanFord
         distances 		= new int[G.size()];
         oldDistances 	= new int[G.size()];
         routage 		= new int[G.size()];
-        
+
         for (int i = 0; i < getG().size(); i++)
         {
             distances[i] 	= getG().getValue(getSource(), i);

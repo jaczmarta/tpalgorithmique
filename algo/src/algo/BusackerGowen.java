@@ -22,7 +22,7 @@ public class BusackerGowen
      */
     public BusackerGowen(FlowCostGraph G)
     {
-    	this.G = new FlowCostGraph(G);
+        this.G = new FlowCostGraph(G);
     }
 
     /**
@@ -77,6 +77,7 @@ public class BusackerGowen
 
         } while (!path.isEmpty() && (wantedFlow != G.getGraphFlow()));
 
+        G.checkFlow();
 
     }
 

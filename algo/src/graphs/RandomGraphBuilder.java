@@ -66,8 +66,10 @@ public class RandomGraphBuilder
 
 
 
+        int cpt = 0;
         while (edgesCounter < getNumEdges())
         {
+
             if (G.exists(G.indexOfSource(), G.indexOfSink()))
             {
                 System.err.println("Warning: RandomGraphBuilder::generateRandomFlowGraphVersion2 :  s --> t");
@@ -97,11 +99,20 @@ public class RandomGraphBuilder
             {
                 int a = randomPath.get(n);
                 int b = randomPath.get(n + 1);
+
                 if ((!G.exists(a, b) && !G.exists(b, a)))
                 {
                     G.set(a, b, getRandomValues());
                     edgesCounter++;
                 }
+            }
+        }
+
+        for (int i = 0; i < this.numVertices; i++)
+        {
+            if (G.exists(i, i))
+            {
+                System.err.println("RandomGraphBuilder::generateRandomFlowGraph : boucle");
             }
         }
 
@@ -117,7 +128,7 @@ public class RandomGraphBuilder
      */
     private List<Integer> generateRandomPath(FlowCostGraph G, int i, int j)
     {
-        int wantedNumVertices = generateInteger(3, G.size() - 2);
+        int wantedNumVertices = generateInteger(3, G.size() - 3);
         List<Integer> path = new ArrayList<Integer>(numVertices);
         path.add(i);
 
@@ -128,7 +139,8 @@ public class RandomGraphBuilder
             do
             {
                 m = generateInteger(1, G.size() - 2);
-            } while (path.contains(m));
+
+            } while (path.contains(m) || (m == j));
 
             path.add(m);
         }
@@ -436,12 +448,13 @@ public class RandomGraphBuilder
         if (max < min)
         {
             System.err.println("Error : RandomGraphBuilder::generateInteger : max < min ");
+
         }
         return (int) Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     /**
-     * 
+     *
      * @return le nombre maximal d'aretes ( n(n-1) / 2 ) - 1 (car pas d'arete de s a t)
      */
     public int maxEdges()
@@ -450,7 +463,7 @@ public class RandomGraphBuilder
     }
 
     /**
-     * 
+     *
      * @return le nombre minimal d'aretes (i.e. le nombre de sommets)
      */
     public int minEdges()

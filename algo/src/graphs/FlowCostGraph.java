@@ -397,8 +397,8 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
 
     /**
      * crée un graphe orienté valué par un paramètre au lieu des 3
-     * 
-     * @param label 
+     *
+     * @param label
      * 				- 0 => graphe des flots
      * 				- 1 => graphe des capacités
      * 				- 2 => graphe des coûts
@@ -407,5 +407,70 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
     public OrientedValuedGraph getSubGraphBy(int label)
     {
         return new OrientedValuedGraph(this, label);
+    }
+
+    public void checkFlow()
+    {
+        //gamma-(s) = {}
+        for (int i = 1; i < size(); i++)
+        {
+            if (exists(i, 0))
+            {
+                System.err.println("gamma-(s) = {}");
+            }
+        }
+
+        //gamma+(t) = {}
+        for (int i = 1; i < size(); i++)
+        {
+            if (exists(size() - 1, i))
+            {
+                System.err.println("gamma+(t) = {}");
+            }
+        }
+
+        //forall x in V : gamma-(v)={} <=> gamma+(v)={} AND flotEntrant = flotSortant
+        for (int i = 1; i < size() - 1; i++)
+        {
+            boolean gammaPlusVide = true;
+            boolean gammaMoinsVide = true;
+            int flotEntrant = 0;
+            int flotSortant = 0;
+            for (int j = 0; j < size(); j++)
+            {
+                if (i != j)
+                {
+                    if (exists(i, j))
+                    {
+                        gammaPlusVide = false;
+                        flotSortant += getFlow(i, j);
+                        if (getFlow(i, j) > getCapacity(i, j))
+                        {
+                            System.err.append("flot>capacite");
+                        }
+                    }
+                    if (exists(j, i))
+                    {
+                        gammaMoinsVide = false;
+                        flotEntrant += getFlow(j, i);
+                        if (getFlow(i, j) > getCapacity(i, j))
+                        {
+                            System.err.append("flot>capacite");
+                        }
+                    }
+                }
+            }
+
+            if (gammaMoinsVide != gammaMoinsVide)
+            {
+                System.err.println("gamma-(v)={} <=> gamma+(v)={}");
+            }
+
+            if (flotEntrant != flotSortant)
+            {
+                System.err.println("flotEntrant = flotSortant");
+            }
+        }
+
     }
 }
