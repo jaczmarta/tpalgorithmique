@@ -16,6 +16,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import algo.BasicMaxFlowMinCost;
+import algo.BusackerGowen;
+
 import graphs.FlowCostGraph;
 import graphs.OrientedValuedGraph;
 import graphs.RandomGraphBuilder;
@@ -30,6 +33,12 @@ public class GraphMainGUI extends Window {
 			JMenuItem quitMenuItem;
 			
 	StringBuffer choices;
+	
+
+	int numGraphs = 1;
+	JTextField numGraphsEntry;
+	JLabel graphsLabel;
+	
 	int numVertices = 10;
 	JTextField numVerticesEntry;
 	JLabel verticesLabel;
@@ -72,7 +81,7 @@ public class GraphMainGUI extends Window {
         GridBagConstraints grid = new GridBagConstraints();
         getContentPane().setLayout(new GridBagLayout());        
         grid.insets = new Insets(5,5,5,5);  //top padding
-        
+               
         {
 	        verticesLabel = new JLabel();    
 	        verticesLabel.setText("Nombre de sommets:");
@@ -103,9 +112,22 @@ public class GraphMainGUI extends Window {
         capacitySelection(grid);
         
         {
+        	graphsLabel = new JLabel();    
+        	graphsLabel.setText("Nombre de graphes à générer:");
+			grid.gridx = 0;
+			grid.gridy = 8;
+			getContentPane().add(graphsLabel, grid);
+	
+			numGraphsEntry = new JTextField("", 5);     
+			grid.gridx = 1;
+			grid.gridy = 8;
+			getContentPane().add(numGraphsEntry, grid);
+        }
+        
+        {
         	createGraphButton = new JButton("Générer !");
 			grid.gridx = 3; 
-			grid.gridy = 8; 
+			grid.gridy = 9; 
 			getContentPane().add(createGraphButton, grid);
 			createGraphButton.addActionListener(this);
         }
@@ -128,8 +150,8 @@ public class GraphMainGUI extends Window {
 						
 		menuBar	.add(fileMenu);
 
-		openMenuItem					.addActionListener(this);
-		quitMenuItem			.addActionListener(this);
+		openMenuItem.addActionListener(this);
+		quitMenuItem.addActionListener(this);
 
 		menuBar	.setVisible(true);
 		setJMenuBar(menuBar);
@@ -179,6 +201,7 @@ public class GraphMainGUI extends Window {
 				maxCost 		= Integer.parseInt(maxCostEntry.getText());
 				minCapacity 	= Integer.parseInt(minCapacityEntry.getText());
 				maxCapacity 	= Integer.parseInt(maxCapacityEntry.getText());
+				numGraphs		= Integer.parseInt(numGraphsEntry.getText());
 			
 	            builder.setNumVertices(numVertices);
 	            builder.setDensity(density);
@@ -187,13 +210,41 @@ public class GraphMainGUI extends Window {
 		        builder.setCostLowerBound(minCost);
 		        builder.setCostUpperBound(maxCost);
 	            
-	            new FlowCostGraphWindow(builder.generateRandomFlowGraph());
+		        if (numGraphs < 5) {
+		        	for (int i = 0; i < numGraphs; i++) {
+		        		new FlowCostGraphWindow(builder.generateRandomFlowGraph());
+		        	}
+		        }
+		        else {
+		            int error = 0;
+		        	for (int i = 0; i < numGraphs; i++) {
+		                FlowCostGraph G = builder.generateRandomFlowGraph();
+
+		                BusackerGowen bg = new BusackerGowen(G);
+		                bg.runAlgorithm();
+
+		                BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
+		                bmfmc.runAlgorithm();
+		                
+		                boolean testFlow = (bg.getG().getGraphFlow() == bmfmc.getG().getGraphFlow());
+		                boolean testCost = (bg.getG().getGraphCost() == bmfmc.getG().getGraphCost());
+
+
+		                if (!testFlow || !testCost) {
+		                    error++;
+		                }
+		        	}
+		        	JOptionPane.showMessageDialog(this,
+						       "Différences:"+error,
+						       "Comparaison", 
+						        JOptionPane.INFORMATION_MESSAGE);
+		        }
 			}
 			catch (NumberFormatException exception) {
 				JOptionPane.showMessageDialog(this,
 					       "Tous les champs n'ont pas été remplis correctement.",
 					       "Warning", 
-					        JOptionPane.YES_NO_OPTION);
+					        JOptionPane.WARNING_MESSAGE);
 			}
 			catch (Exception e) {
 				new ErrorMessage(e);

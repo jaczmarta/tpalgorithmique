@@ -33,12 +33,7 @@ public abstract class AbstractGraphWindow extends Window {
 			JMenuItem saveMenuItem;
 			JMenuItem openMenuItem;
 			JMenuItem quitMenuItem;
-		JMenu graphMenu;
-			JMenuItem busackerGowenMenuItem;
-			JMenuItem generateDistanceGraph;
-
-
-
+			
 	public AbstractGraphWindow() {
 		graphToBeDrawn = new DirectedSparseMultigraph<Integer, String>();
 	}
@@ -104,31 +99,23 @@ public abstract class AbstractGraphWindow extends Window {
 	public void setMenus(Container pane) {		
 		menuBar = new JMenuBar();
 
-		fileMenu 	= new JMenu("Fichier");		
-		graphMenu	= new JMenu("Graphe");
+		fileMenu 	= new JMenu("Fichier");
 		
 		saveMenuItem			= new JMenuItem("Enregistrer sous...");
-		openMenuItem			= new JMenuItem("Ouvrir un graphe...");
+		openMenuItem			= new JMenuItem("Ouvrir un graphe");
 		quitMenuItem			= new JMenuItem("Quitter");
-		busackerGowenMenuItem	= new JMenuItem("Busacker & Gowen");
-		generateDistanceGraph	= new JMenuItem("Générer le graphe d'écart");
 
 		fileMenu.add(saveMenuItem);
 		fileMenu.add(openMenuItem);
 		fileMenu.addSeparator();
 		fileMenu.add(quitMenuItem);		
-				
-		graphMenu.add(busackerGowenMenuItem);
-		graphMenu.add(generateDistanceGraph);
+
 		
 		menuBar	.add(fileMenu);
-		menuBar	.add(graphMenu);
 
 		saveMenuItem			.addActionListener(this);
 		openMenuItem			.addActionListener(this);
 		quitMenuItem			.addActionListener(this);
-		busackerGowenMenuItem	.addActionListener(this);
-		generateDistanceGraph	.addActionListener(this);
 
 		menuBar	.setVisible(true);
 		setJMenuBar(menuBar);
