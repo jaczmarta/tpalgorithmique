@@ -140,7 +140,7 @@ public class RandomGraphBuilder
             {
                 m = generateInteger(1, G.size() - 2);
 
-            } while (path.contains(m) || (m == j));
+            } while (path.contains(m) || (m == j) || (m == i));
 
             path.add(m);
         }
@@ -447,7 +447,7 @@ public class RandomGraphBuilder
     {
         if (max < min)
         {
-            System.err.println("Error : RandomGraphBuilder::generateInteger : max < min ");
+            System.err.println("Error : RandomGraphBuilder::generateInteger : max < min "+min+" "+max);
 
         }
         return (int) Math.floor(Math.random() * (max - min + 1)) + min;

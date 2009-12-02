@@ -14,6 +14,7 @@ import values.FlowCostValues;
 import values.IValues;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 
+import algo.BasicMaxFlowMinCost;
 import algo.BusackerGowen;
 
 import graphs.FlowCostGraph;
@@ -22,10 +23,18 @@ public class FlowCostGraphWindow extends AbstractGraphWindow {
 
 	private static final long serialVersionUID = 1L;
 	private FlowCostGraph graph;
-	JMenu orientedValuedGraphMenu;
-		JMenuItem flowGraphMenuItem;
-		JMenuItem capacityDistanceGraph;
-		JMenuItem costDistanceGraph;
+
+	JMenu graphMenu;
+		JMenuItem generateDistanceGraph;
+		JMenu fmaxcminMenu;
+			JMenuItem absorbingCircuitMenuItem;
+			JMenuItem busackerGowenMenuItem;
+		JMenu orientedValuedGraphMenu;
+			JMenuItem flowGraphMenuItem;
+			JMenuItem capacityDistanceGraph;
+			JMenuItem costDistanceGraph;
+	JMenu compareMenu;
+		JMenuItem compareMenuItem;
 	
 	/**
 	 * @param g
@@ -40,8 +49,8 @@ public class FlowCostGraphWindow extends AbstractGraphWindow {
 	 * @param g
 	 * @param b
 	 */
-	public FlowCostGraphWindow(FlowCostGraph g, boolean b) {
-		super("Busacker & Gowen");
+	public FlowCostGraphWindow(FlowCostGraph g, String title) {
+		super(title);
 		graph = new FlowCostGraph(g);
 		graphToBeDrawn = new DirectedSparseMultigraph<Integer, String>();
 		try {
@@ -67,17 +76,39 @@ public class FlowCostGraphWindow extends AbstractGraphWindow {
 	public void setMenus(Container pane) {
 		super.setMenus(pane);
 		
+		graphMenu	= new JMenu("Générer");
+		fmaxcminMenu= new JMenu("Flot max à coût min");
+		compareMenu = new JMenu("Comparer");
+		
 		orientedValuedGraphMenu = new JMenu("Generer le graphe de...");
 		flowGraphMenuItem 		= new JMenuItem("Flots");
 		capacityDistanceGraph 	= new JMenuItem("Capacites");
 		costDistanceGraph 		= new JMenuItem("Couts");
+		absorbingCircuitMenuItem= new JMenuItem("Circuits absorbants");
+		busackerGowenMenuItem	= new JMenuItem("Busacker & Gowen");
+		generateDistanceGraph	= new JMenuItem("Générer le graphe d'écart");
+		compareMenuItem			= new JMenuItem("Comparer les deux méthodes");
 		
 		orientedValuedGraphMenu.add(flowGraphMenuItem);
 		orientedValuedGraphMenu.add(capacityDistanceGraph);
 		orientedValuedGraphMenu.add(costDistanceGraph);
-		
+	
+		graphMenu.add(generateDistanceGraph);
+		graphMenu.add(fmaxcminMenu);
 		graphMenu.add(orientedValuedGraphMenu);
 		
+		fmaxcminMenu.add(absorbingCircuitMenuItem);
+		fmaxcminMenu.add(busackerGowenMenuItem);
+		
+		compareMenu.add(compareMenuItem);
+		
+		menuBar.add(graphMenu);
+		menuBar.add(compareMenu);
+		
+		absorbingCircuitMenuItem.addActionListener(this);
+		busackerGowenMenuItem	.addActionListener(this);
+		generateDistanceGraph	.addActionListener(this);
+		compareMenuItem			.addActionListener(this);
 		flowGraphMenuItem		.addActionListener(this);
 		capacityDistanceGraph	.addActionListener(this);
 		costDistanceGraph		.addActionListener(this);
@@ -99,18 +130,15 @@ public class FlowCostGraphWindow extends AbstractGraphWindow {
 		else if (source == costDistanceGraph) {
 			new SingleValuedGraphWindow(graph.getSubGraphBy(2));
 		}
+		else if (source == absorbingCircuitMenuItem) {
+			createFlowByAbsorbingCircuit();
+		}
 		else if (source == busackerGowenMenuItem) {
-			BusackerGowen bg = new BusackerGowen(graph);
-			bg.runAlgorithm();
-			new FlowCostGraphWindow(bg.getG(), true);
-			JOptionPane.showMessageDialog(this,
-				    "Resume:\n" +
-				    "Source: " + bg.getG().indexOfSource() + "\n" +
-				    "Puit: " + bg.getG().indexOfSink() + "\n" +
-				    "Flot: " + bg.getG().getGraphFlow() + "\n" +
-				    "Cout: " + bg.getG().getGraphCost(),
-				    "Informations",
-				    JOptionPane.INFORMATION_MESSAGE);
+			createFlowByBG();
+		}
+		else if (source == compareMenuItem) {
+			createFlowByAbsorbingCircuit();
+			createFlowByBG();
 		}
 		else if (source == saveMenuItem) {
 			try {
@@ -153,5 +181,35 @@ public class FlowCostGraphWindow extends AbstractGraphWindow {
 				System.out.println(exception.getMessage());
 			}
 		}
+	}
+	
+	public void createFlowByBG() {
+		BusackerGowen bg = new BusackerGowen(graph);
+		bg.runAlgorithm();
+		new FlowCostGraphWindow(bg.getG(), "Par la méthode de Busacker & Gowen: Flot: "+
+				bg.getG().getGraphFlow()+" / Cout: "+bg.getG().getGraphCost());
+		JOptionPane.showMessageDialog(this,
+			    "Resume:\n\n" +
+			    "Source: " + bg.getG().indexOfSource() 	+ "\n" +
+			    "Puit: " + bg.getG().indexOfSink() 		+ "\n" +
+			    "Flot: " + bg.getG().getGraphFlow() 	+ "\n" +
+			    "Cout: " + bg.getG().getGraphCost(),
+			    "Informations",
+			    JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	public void createFlowByAbsorbingCircuit() {
+		BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(graph);
+        bmfmc.runAlgorithm();
+		new FlowCostGraphWindow(bmfmc.getG(), "Par les circuits absorbants: Flot: "+
+				bmfmc.getG().getGraphFlow()+" / Cout: "+bmfmc.getG().getGraphCost());
+		JOptionPane.showMessageDialog(this,
+			    "Résumé:\n\n" +
+			    "Source: " + bmfmc.getG().indexOfSource() 	+ "\n" +
+			    "Puit: " + bmfmc.getG().indexOfSink() 		+ "\n" +
+			    "Flot: " + bmfmc.getG().getGraphFlow() 		+ "\n" +
+			    "Cout: " + bmfmc.getG().getGraphCost(),
+			    "Informations",
+			    JOptionPane.INFORMATION_MESSAGE);
 	}
 }
