@@ -23,11 +23,11 @@ public class BellmanFord
     //le graphe
     private OrientedValuedGraph G;
     //tableau des distances
-    private int[] distances;
+    private long[] distances;
     //tableau du routage
     private int[] routage;
     //variables utilisées dans l'algo
-    private int[] oldDistances;
+    private long[] oldDistances;
 
     /**
      * constructeur
@@ -47,15 +47,15 @@ public class BellmanFord
      */
     private void init()
     {
-        distances 		= new int[G.size()];
-        oldDistances 	= new int[G.size()];
-        routage 		= new int[G.size()];
+        distances = new long[G.size()];
+        oldDistances = new long[G.size()];
+        routage = new int[G.size()];
 
         for (int i = 0; i < getG().size(); i++)
         {
-            distances[i] 	= getG().getValue(getSource(), i);
+            distances[i] = getG().getValue(getSource(), i);
             oldDistances[i] = distances[i];
-            routage[i] 		= getSource();
+            routage[i] = getSource();
         }
     }
 
@@ -65,7 +65,7 @@ public class BellmanFord
     public void runAlgorithm()
     {
         int k = 0;
-        int tmpDist = 0;
+        long tmpDist = 0;
 
         while (k < G.size())
         {
@@ -82,7 +82,7 @@ public class BellmanFord
                 {
                     if (G.exists(j, i))
                     {
-                    	tmpDist = oldDistances[j] + G.getValue(j, i);
+                        tmpDist = oldDistances[j] + G.getValue(j, i);
                         if (tmpDist < distances[i])
                         {
                             distances[i] = tmpDist;

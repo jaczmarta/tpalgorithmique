@@ -12,9 +12,9 @@ import java.util.Collections;
  */
 public class FloydWarshall
 {
-    //matrice delta des chemins les plus courts
 
-    private int[][] delta;
+    //matrice delta des chemins les plus courts
+    private long[][] delta;
     //matrice du routage :
     //P[i][j] contient le sommet précédent j sur un plus court chemin de i à j
     private int[][] P;
@@ -27,7 +27,7 @@ public class FloydWarshall
     public FloydWarshall()
     {
         absorbingCircuit = false;
-        delta = new int[0][0];
+        delta = new long[0][0];
         P = new int[0][0];
         G = new OrientedValuedGraph();
     }
@@ -41,7 +41,7 @@ public class FloydWarshall
         absorbingCircuit = false;
         this.G = G;
         int size = G.size();
-        delta = new int[size][size];
+        delta = new long[size][size];
         P = new int[size][size];
     }
 
@@ -49,7 +49,7 @@ public class FloydWarshall
      * accesseur matrice delta
      * @return la matrice delta des distances min
      */
-    public int[][] getDelta()
+    public long[][] getDelta()
     {
         return delta;
     }
@@ -60,7 +60,7 @@ public class FloydWarshall
      */
     public int[][] getP()
     {
-        return delta;
+        return P;
     }
 
     /**
@@ -75,19 +75,37 @@ public class FloydWarshall
         {
             for (int j = 0; j < G.size(); j++)
             {
-                for (int i = 0; i < G.size(); i++)
+                if (delta[j][k] != IValues.infinity)
                 {
-                    if (min(delta[i][j], delta[i][k], delta[k][j]) != delta[i][j])
+                    for (int i = 0; i < G.size(); i++)
                     {
-                        // delta[i][j] >= delta[i][k] + delta[k][j]
-                        // on passe par( min( xxx, yyy ) != xxx ) pour eviter les erreurs avec les infinis...
-                        P[i][j] = P[k][j];
-                    }
-                    delta[i][j] = min(delta[i][j], delta[i][k], delta[k][j]);
+                        if (delta[k][i] != IValues.infinity)
+                        {
+                            if (delta[j][i] != IValues.infinity)
+                            {
 
-                    if ((i == j) && (delta[i][j] < 0))
-                    {
-                        absorbingCircuit = true;
+                                if ((delta[j][i] > (delta[j][k] + delta[k][i])))
+                                {
+                                    // delta[i][j] >= delta[i][k] + delta[k][j]
+                                    // on passe par( min( xxx, yyy ) != xxx ) pour eviter les erreurs avec les infinis...
+                                    P[j][i] = P[k][i];
+                                    delta[j][i] = delta[j][k] + delta[k][i];
+                                }
+
+                            } else
+                            {
+                                P[j][i] = P[k][i];
+                                delta[j][i] = delta[j][k] + delta[k][i];
+                            }
+
+                            if (i == j)
+                            {
+                                if (delta[i][i] < 0)
+                                {
+                                    this.absorbingCircuit = true;
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -203,13 +221,7 @@ public class FloydWarshall
      */
     private int min(int a, int b, int c)
     {
-        if ((b == IValues.infinity) || (c == IValues.infinity))
-        {
-            return a;
-        } else
-        {
-            return (a < b + c ? a : b + c);
-        }
+        return (a < b + c ? a : b + c);
     }
 
     /**
@@ -223,6 +235,7 @@ public class FloydWarshall
         {
             for (int i = 0; i < delta.length; i++)
             {
+                int memi = i;
 
                 //circuit absorbant <=> il existe i tel que delta[i][i] < 0 (ou P[i][i] != i)
                 if (delta[i][i] < 0)
@@ -231,27 +244,33 @@ public class FloydWarshall
                     List<Integer> pile1 = new ArrayList<Integer>();
                     List<Integer> pile2 = new ArrayList<Integer>();
 
-                    int first = i;
+                    int k = i;
 
-                    pile1.add(i);
-                    i = P[i][i];
-                    while (!pile2.contains(i))
+                    pile1.add(k);
+                    k = P[k][k];
+
+                    while (!pile2.contains(k))
                     {
-                        if (pile1.contains(i))
-                        {
-                            pile2.add(i);
-                        }
-                        pile1.add(i);
 
-                        i = P[i][i];
+                        if (pile1.contains(k))
+                        {
+                            pile2.add(k);
+                        }
+                        pile1.add(k);
+
+                        k = P[i][k];
                     }
 
                     Collections.reverse(pile2);
 
                     if (pile2.size() > 2)
                     { //ce if est moche
-                        checkCircuit(pile2);
+                        //checkCircuit(pile2);
                         return pile2;
+                    } else
+                    {
+                        //System.out.println("");
+                        //i = memi;
                     }
                 }
             }
@@ -278,12 +297,34 @@ public class FloydWarshall
         }
         if (sum >= 0)
         {
-            System.err.println("sum <= 0");
+            System.err.println("sum = " + sum);
         }
     }
 
     public boolean hasAbsorbingCircuit()
     {
         return absorbingCircuit;
+    }
+
+    private int plus(int x, int y)
+    {
+        if ((x == IValues.infinity) || (y == IValues.infinity))
+        {
+            return IValues.infinity;
+        } else
+        {
+            return x + y;
+        }
+    }
+
+    private boolean superieur(int x, int y)
+    {
+        if (y == IValues.infinity)
+        {
+            return false;
+        } else
+        {
+            return (x > y);
+        }
     }
 }

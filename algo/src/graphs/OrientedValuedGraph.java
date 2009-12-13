@@ -72,7 +72,7 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
      * constructeur par matrice d'adjacence
      * @param costValues la matrice d'adjacence du graphe
      */
-    public OrientedValuedGraph(int[][] costValues)
+    public OrientedValuedGraph(long[][] costValues)
     {
 //        super(costValues.length);
 
@@ -123,7 +123,7 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
      * @param j point de sortie de l'arc
      * @return le cout de l'arc (i, j)
      */
-    public int getValue(int i, int j)
+    public long getValue(int i, int j)
     {
         return get(i, j).getValue();
     }
@@ -134,7 +134,7 @@ public class OrientedValuedGraph extends AbstractGraph<IntValues>
      * @param j point de sortie de l'arc
      * @param cost cout de l'arc (i, j)
      */
-    public void setValue(int i, int j, int cost)
+    public void setValue(int i, int j, long cost)
     {
         set(i, j, new IntValues(cost));
     }

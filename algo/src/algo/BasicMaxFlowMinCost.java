@@ -5,6 +5,7 @@
 package algo;
 
 import graphs.FlowCostGraph;
+import graphs.OrientedValuedGraph;
 import java.util.List;
 
 import values.IValues;
@@ -19,6 +20,7 @@ public class BasicMaxFlowMinCost
 {
 
     private FlowCostGraph G;
+    private OrientedValuedGraph Ge;
 
     public BasicMaxFlowMinCost(FlowCostGraph G)
     {
@@ -37,7 +39,7 @@ public class BasicMaxFlowMinCost
             circuitWithNegativeCost = getCircuitWithNegativeCost();
         }
 
-        G.checkFlow();
+        //G.checkFlow();
 
     }
 
@@ -56,8 +58,9 @@ public class BasicMaxFlowMinCost
      */
     private List<Integer> getCircuitWithNegativeCost()
     {
+        Ge = G.getResultingNetworkWithCosts();
 
-        FloydWarshall fw = new FloydWarshall(G.getResultingNetworkWithCosts());
+        FloydWarshall fw = new FloydWarshall(Ge);
         fw.runAlgorithm();
         return fw.getCircuitWithNegativeCost();
 
@@ -69,7 +72,7 @@ public class BasicMaxFlowMinCost
      */
     private void updateFLow(List<Integer> path)
     {
-        int delta = 1;
+        int delta = getPossibleIncrease2(G, path);
 
         for (int k = 0; k < path.size(); k++)
         {
@@ -99,7 +102,7 @@ public class BasicMaxFlowMinCost
     {
         int increase = 0;
         int increaseMax = IValues.infinity;
-        for (int k = 0; k < path.size() - 1; k++)
+        for (int k = 0; k < path.size()-1; k++)
         {
             int i = path.get(k);
             int j = path.get(k + 1);
@@ -112,7 +115,36 @@ public class BasicMaxFlowMinCost
                 increase = graph.getFlow(j, i);
             } else
             {
-                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ")");
+                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ") ; path = "+path);
+                System.exit(-1);
+            }
+            increaseMax = Math.min(increaseMax, increase);
+
+        }
+        return increaseMax;
+    }
+
+    /**
+     * calcule l'augmentation possible de flot pour un chemin augmentant
+     */
+    public int getPossibleIncrease2(FlowCostGraph graph, List<Integer> path)
+    {
+        int increase = 0;
+        int increaseMax = IValues.infinity;
+        for (int k = 0; k < path.size(); k++)
+        {
+            int i = path.get(k);
+            int j = path.get((k + 1) % path.size());
+
+            if (graph.exists(i, j))
+            {
+                increase = graph.getCapacity(i, j) - graph.getFlow(i, j);
+            } else if (graph.exists(j, i))
+            {
+                increase = graph.getFlow(j, i);
+            } else
+            {
+                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ") ; path = "+path);
                 System.exit(-1);
             }
             increaseMax = Math.min(increaseMax, increase);
