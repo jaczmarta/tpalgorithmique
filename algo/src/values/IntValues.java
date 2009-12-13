@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class IntValues extends AbstractValues implements Serializable, Externalizable
 {
 
-    private int value;
+    private long value;
 
     public IntValues()
     {
@@ -23,7 +23,7 @@ public class IntValues extends AbstractValues implements Serializable, Externali
      * constructeur par paramètre
      * @param cost
      */
-    public IntValues(int cost)
+    public IntValues(long cost)
     {
         value = cost;
     }
@@ -31,7 +31,7 @@ public class IntValues extends AbstractValues implements Serializable, Externali
     /**
      * @return the value
      */
-    public int getValue()
+    public long getValue()
     {
         return value;
     }
@@ -39,7 +39,7 @@ public class IntValues extends AbstractValues implements Serializable, Externali
     /**
      * @param value the value to set
      */
-    public void setValue(int cost)
+    public void setValue(long cost)
     {
         this.value = cost;
     }
@@ -84,7 +84,7 @@ public class IntValues extends AbstractValues implements Serializable, Externali
 	}
 
 	public void writeExternal(ObjectOutput out) throws IOException {
-		out.writeInt(value);
+		out.writeLong(value);
 		
 	}
 

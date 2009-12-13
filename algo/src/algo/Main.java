@@ -139,7 +139,7 @@ public class Main
 
         }
 
-        *//*
+         *//*
 
         System.out.println("-----------------------------BUSACKER ET GOWEN SUR GRAPHE ALEATOIRE ---------------------------------");
         {
@@ -191,7 +191,7 @@ public class Main
 
         }
 
-         */
+         *//*
 
         System.out.println("----------------------------- TEST DES DEUX ALGOS ---------------------------------");
         {
@@ -204,37 +204,109 @@ public class Main
             {
                 cpt++;
 
+                //System.out.print(cpt + "...");
+
+
 
                 RandomGraphBuilder builder = new RandomGraphBuilder();
-                builder.setNumVertices(20);
-                builder.setDensity(Math.random() / 3 + 0.5);
+                builder.setNumVertices(30);
+                builder.setDensity(0.7);
                 builder.setCapacityLowerBound(2);
-                builder.setCapacityUpperBound(8);
-                builder.setCostLowerBound(2);
-                builder.setCostUpperBound(8);
+                builder.setCapacityUpperBound(100);
+                builder.setCostLowerBound(1);
+                builder.setCostUpperBound(10);
 
                 FlowCostGraph G = builder.generateRandomFlowGraph();
+
+                //System.out.print("generated...");
+
 
                 BusackerGowen bg = new BusackerGowen(G);
                 bg.runAlgorithm();
 
+                //System.out.print("Busacker...");
+
                 BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
                 bmfmc.runAlgorithm();
+
+                //System.out.print("Gowen...");
 
                 boolean testFlot = (bg.getG().getGraphFlow() == bmfmc.getG().getGraphFlow());
                 boolean testCout = (bg.getG().getGraphCost() == bmfmc.getG().getGraphCost());
 
+                //System.out.print("test...");
 
                 if (!testFlot || !testCout)
                 {
                     faux++;
+                    //System.out.println("NOTok");
+                } else {
+                    //System.out.println("ok");
                 }
+
+
             }
 
             System.out.println("faux: " + faux);
         }
+        *//*
+        System.out.println("----------------------------- PARTIE PRATIQUE ---------------------------------");
+        {
+        FlowCostGraph fg = new FlowCostGraph(6);
+        fg.set(0, 1, 0, 4, 3);
+        fg.set(0, 2, 0, 1, 2);
+        fg.set(1, 3, 0, 3, 2);
+        fg.set(1, 4, 0, 1, 2);
+        fg.set(2, 1, 0, 2, 2);
+        fg.set(2, 4, 0, 1, 2);
+        fg.set(3, 5, 0, 2, 4);
+        fg.set(4, 3, 0, 2, 1);
+        fg.set(4, 5, 0, 3, 3);
+
+        BusackerGowen bg = new BusackerGowen(fg);
+        bg.runAlgorithm();
+        //bg.getG().show();
+        System.out.println("\nBusacker et Gowen :");
+        System.out.println("Flot = " + bg.getG().getGraphFlow());
+        System.out.println("Cout = " + bg.getG().getGraphCost());
 
 
+        BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(fg);
+        bmfmc.runAlgorithm();
+        //bmfmc.getG().show();
+        System.out.println("Basique :");
+        System.out.println("Flot = " + bmfmc.getG().getGraphFlow());
+        System.out.println("Cout = " + bmfmc.getG().getGraphCost());
+
+        }
+
+         */
+         System.out.println("----------------------------- TESTS ---------------------------------");
+        {
+
+             Test test = new Test();
+             test.setNumVerticesFrom(7);
+             test.setNumVerticesTo(50);
+             test.setNumTests(50);
+
+             
+             test.setDensity(0.3);
+             test.setMaxCap(5);
+             test.runTest();
+             test.outputResults("basic01.txt", "busacker01.txt");
+
+             test.setDensity(0.5);
+             test.setMaxCap(100);
+             test.runTest();
+             test.outputResults("basic02.txt", "busacker02.txt");
+
+             test.setDensity(0.7);
+             test.setMaxCap(10000);
+             test.runTest();
+             test.outputResults("basic03.txt", "busacker03.txt");
+        }
+
+            
 
     }
 }

@@ -288,8 +288,8 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
                 if (exists(i, j))
                 {
 
-                    int xij = getFlow(i, j);
-                    int cij = getCapacity(i, j);
+                    long xij = getFlow(i, j);
+                    long cij = getCapacity(i, j);
 
                     if (xij < cij)
                     {
@@ -461,7 +461,7 @@ public class FlowCostGraph extends AbstractGraph<FlowCostValues>
                 }
             }
 
-            if (gammaMoinsVide != gammaMoinsVide)
+            if (gammaMoinsVide != gammaPlusVide)
             {
                 System.err.println("gamma-(v)={} <=> gamma+(v)={}");
             }

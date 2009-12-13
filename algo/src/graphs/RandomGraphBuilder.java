@@ -63,12 +63,25 @@ public class RandomGraphBuilder
         {
             System.err.println("Warning: RandomGraphBuilder::generateRandomFlowGraphVersion2 : enough edges have been created during the initialization");
         }
-
-
-
+        int oldEdgesCounter = 0;
         int cpt = 0;
+
         while (edgesCounter < getNumEdges())
         {
+            if ((oldEdgesCounter == edgesCounter) && (edgesCounter != 0)) {
+                cpt++;
+                if (cpt > getNumEdges()) {
+                    System.out.println("echec");
+                    return generateRandomFlowGraph();
+                }
+            } else {
+                cpt = 0;
+            }
+
+
+
+            oldEdgesCounter = edgesCounter;
+
 
             if (G.exists(G.indexOfSource(), G.indexOfSink()))
             {
@@ -84,12 +97,12 @@ public class RandomGraphBuilder
             //  i != j
             int i, j;
             do
-            {
+            {                
                 i = generateInteger(0, G.indexOfSink() - 2);
             } while (G.gammaMinus(i).isEmpty() && (i != G.indexOfSource()));
 
             do
-            {
+            {                
                 j = generateInteger(1, G.indexOfSink() - 1);
             } while ((j == i) || (G.gammaPlus(j).isEmpty() && (j != G.indexOfSink())));
 

@@ -77,7 +77,7 @@ public class BusackerGowen
 
         } while (!path.isEmpty() && (wantedFlow != G.getGraphFlow()));
 
-        G.checkFlow();
+        //G.checkFlow();
 
     }
 

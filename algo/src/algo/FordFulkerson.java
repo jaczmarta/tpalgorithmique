@@ -40,7 +40,7 @@ public class FordFulkerson
 
         do
         {
-        	betterChain = G.getResultingNetwork().getShortestPath(G.indexOfSource(), G.indexOfSink());
+            betterChain = G.getResultingNetwork().getShortestPath(G.indexOfSource(), G.indexOfSink());
             if (!betterChain.isEmpty())
             {
                 int delta = BasicMaxFlowMinCost.getPossibleIncrease(G, betterChain);
