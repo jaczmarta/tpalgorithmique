@@ -73,11 +73,13 @@ public class BusackerGowen
             if (!path.isEmpty())
             {
                 int delta = getPossibleAugmentation(path);
+                //System.out.println("BUSAC : augmentation = "+delta);
                 updateFlow(path, delta);
             }
 
         } while (!path.isEmpty() && (wantedFlow != G.getGraphFlow()));
 
+        //System.out.println("*************cpt = "+cpt);
 
     }
 

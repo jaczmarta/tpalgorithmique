@@ -36,20 +36,22 @@ public class BasicMaxFlowMinCost
         buildFlow();
         List<Integer> circuitWithNegativeCost = getCircuitWithNegativeCost();
 
-
+        int cpt = 0;
         while (!circuitWithNegativeCost.isEmpty())
         {
-            checkCircuit(circuitWithNegativeCost);
+            cpt++;
             updateFLow(circuitWithNegativeCost);
 
             circuitWithNegativeCost = getCircuitWithNegativeCost();
-            
+
         }
+
+        //System.out.println("cpt = "+cpt);
 
     }
 
     /**
-     * construit un flot de départ à l'aide de l'algorithme de Ford-Fulkerson
+     * construit un flot de départ à l'aide de l'algorithme d'edmond-karp
      */
     private void buildFlow()
     {
@@ -66,7 +68,7 @@ public class BasicMaxFlowMinCost
 
         Ge = G.getResultingNetworkWithCosts();
 
-        boolean hasCircuit = false;  
+        boolean hasCircuit = false;
 
         int s = 0;
         long[] L = new long[Ge.size()];
@@ -119,7 +121,13 @@ public class BasicMaxFlowMinCost
                         }
                         List<Integer> circuit = pile.subList(pile.indexOf(k), pile.size());
                         Collections.reverse(circuit);
-                        return circuit;
+                        if (circuit.size() > 2)
+                        {
+                            return circuit;
+                        } else
+                        {
+                            return new ArrayList<Integer>();
+                        }
 
                     }
                 }
@@ -142,7 +150,8 @@ public class BasicMaxFlowMinCost
      */
     private void updateFLow(List<Integer> path)
     {
-        int delta = getPossibleIncrease2(G, path);
+        int delta = getPossibleIncrease(path);
+        //System.out.println("BASIC : augmentation = "+delta);
 
         for (int k = 0; k < path.size(); k++)
         {
@@ -190,36 +199,7 @@ public class BasicMaxFlowMinCost
     /**
      * calcule l'augmentation possible de flot pour un chemin augmentant
      */
-    public static int getPossibleIncrease(FlowCostGraph graph, List<Integer> path)
-    {
-        int increase = 0;
-        int increaseMax = IValues.infinity;
-        for (int k = 0; k < path.size() - 1; k++)
-        {
-            int i = path.get(k);
-            int j = path.get(k + 1);
-
-            if (graph.exists(i, j))
-            {
-                increase = graph.getCapacity(i, j) - graph.getFlow(i, j);
-            } else if (graph.exists(j, i))
-            {
-                increase = graph.getFlow(j, i);
-            } else
-            {
-                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ") ; path = " + path);
-                System.exit(-1);
-            }
-            increaseMax = Math.min(increaseMax, increase);
-
-        }
-        return increaseMax;
-    }
-
-    /**
-     * calcule l'augmentation possible de flot pour un chemin augmentant
-     */
-    public int getPossibleIncrease2(FlowCostGraph graph, List<Integer> path)
+    public int getPossibleIncrease(List<Integer> path)
     {
         int increase = 0;
         int increaseMax = IValues.infinity;
@@ -228,12 +208,12 @@ public class BasicMaxFlowMinCost
             int i = path.get(k);
             int j = path.get((k + 1) % path.size());
 
-            if (graph.exists(i, j))
+            if (G.exists(i, j))
             {
-                increase = graph.getCapacity(i, j) - graph.getFlow(i, j);
-            } else if (graph.exists(j, i))
+                increase = G.getCapacity(i, j) - G.getFlow(i, j);
+            } else if (G.exists(j, i))
             {
-                increase = graph.getFlow(j, i);
+                increase = G.getFlow(j, i);
             } else
             {
                 System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ") ; path = " + path);

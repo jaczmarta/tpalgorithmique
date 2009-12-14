@@ -81,14 +81,15 @@ public class Test
 
                     start = System.currentTimeMillis();
                     {
+
                         BusackerGowen bg = new BusackerGowen(G2);
                         bg.runAlgorithm();
                     }
                     time = System.currentTimeMillis() - start;
 
                     timeBusackerGowen += time;
-                    
-                    
+
+
                     FlowCostGraph G1 = builder.generateRandomFlowGraph();
 
                     //System.out.print("OK......basic...");
@@ -104,7 +105,7 @@ public class Test
 
                     //System.out.print("OK......busacker...");
 
-                    
+
 
                     //System.out.println("OK\n");
 
