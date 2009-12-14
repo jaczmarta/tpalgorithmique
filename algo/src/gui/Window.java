@@ -34,7 +34,7 @@ public class Window extends JFrame implements ActionListener {
 		setLocation(new Point(100, 100));
 		setResizable(true);
 		setDefaultLookAndFeelDecorated(true); 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setBackground(Color.BLACK);
         setVisible(true);
 	}
