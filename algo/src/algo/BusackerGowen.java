@@ -64,9 +64,10 @@ public class BusackerGowen
 
         List<Integer> path = new ArrayList<Integer>();
 
+        int cpt = 0;
         do
         {
-
+            cpt++;
             path = G.getResultingNetworkWithCosts().getShortestPath(G.indexOfSource(), G.indexOfSink());
 
             if (!path.isEmpty())
@@ -77,7 +78,6 @@ public class BusackerGowen
 
         } while (!path.isEmpty() && (wantedFlow != G.getGraphFlow()));
 
-        //G.checkFlow();
 
     }
 
