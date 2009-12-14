@@ -6,6 +6,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -65,6 +66,10 @@ public class GraphMainGUI extends Window {
 	JTextField maxCapacityEntry;
 	JLabel maxCapacityLabel;
 	
+	int numTests = 1;
+	JTextField numTestsEntry;
+	JLabel numTestsLabel;
+	
 	JButton createGraphButton;
     
 	public GraphMainGUI() {
@@ -111,23 +116,36 @@ public class GraphMainGUI extends Window {
         costSelection(grid);
         capacitySelection(grid);
         
-        {
-        	graphsLabel = new JLabel();    
-        	graphsLabel.setText("Nombre de graphes à générer:");
-			grid.gridx = 0;
-			grid.gridy = 8;
-			getContentPane().add(graphsLabel, grid);
-	
-			numGraphsEntry = new JTextField("", 5);     
-			grid.gridx = 1;
-			grid.gridy = 8;
-			getContentPane().add(numGraphsEntry, grid);
-        }
+//        {
+//        	graphsLabel = new JLabel();    
+//        	graphsLabel.setText("Nombre de graphes à générer:");
+//			grid.gridx = 0;
+//			grid.gridy = 8;
+//			getContentPane().add(graphsLabel, grid);
+//	
+//			numGraphsEntry = new JTextField("", 5);     
+//			grid.gridx = 1;
+//			grid.gridy = 8;
+//			getContentPane().add(numGraphsEntry, grid);
+//        }
         
+        {
+        	numTestsLabel = new JLabel();    
+        	numTestsLabel.setText("Nombre de tests à éffectuer:");
+			grid.gridx = 0;
+			grid.gridy = 9;
+			getContentPane().add(numTestsLabel, grid);
+	
+			numTestsEntry = new JTextField("", 5);     
+			grid.gridx = 1;
+			grid.gridy = 9;
+			getContentPane().add(numTestsEntry, grid);
+        }
+
         {
         	createGraphButton = new JButton("Générer !");
 			grid.gridx = 3; 
-			grid.gridy = 9; 
+			grid.gridy = 10; 
 			getContentPane().add(createGraphButton, grid);
 			createGraphButton.addActionListener(this);
         }
@@ -201,8 +219,9 @@ public class GraphMainGUI extends Window {
 				maxCost 		= Integer.parseInt(maxCostEntry.getText());
 				minCapacity 	= Integer.parseInt(minCapacityEntry.getText());
 				maxCapacity 	= Integer.parseInt(maxCapacityEntry.getText());
-				numGraphs		= Integer.parseInt(numGraphsEntry.getText());
-			
+				//numGraphs		= Integer.parseInt(numGraphsEntry.getText());
+				numTests		= Integer.parseInt(numTestsEntry.getText());
+				
 	            builder.setNumVertices(numVertices);
 	            builder.setDensity(density);
 	            builder.setCapacityLowerBound(minCapacity);
@@ -216,28 +235,104 @@ public class GraphMainGUI extends Window {
 		        	}
 		        }
 		        else {
-		            int error = 0;
-		        	for (int i = 0; i < numGraphs; i++) {
-		                FlowCostGraph G = builder.generateRandomFlowGraph();
+//		            int error = 0;
+//		        	for (int i = 0; i < numTests; i++) {
+//		                FlowCostGraph G = builder.generateRandomFlowGraph();
+//
+//		                BusackerGowen bg = new BusackerGowen(G);
+//		                bg.runAlgorithm();
+//
+//		                BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
+//		                bmfmc.runAlgorithm();
+//		                
+//		                boolean testFlow = (bg.getG().getGraphFlow() == bmfmc.getG().getGraphFlow());
+//		                boolean testCost = (bg.getG().getGraphCost() == bmfmc.getG().getGraphCost());
+//
+//
+//		                if (!testFlow || !testCost) {
+//		                    error++;
+//		                }
+//		        	}
+		        	
+		        	long start;
+		            long time;
+		            double avancement = 0;
+		            HashMap<Integer, Double> basicResults = new HashMap<Integer, Double>();
+		            HashMap<Integer, Double> busackerGowenResults = new HashMap<Integer, Double>();
 
-		                BusackerGowen bg = new BusackerGowen(G);
-		                bg.runAlgorithm();
-
-		                BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
-		                bmfmc.runAlgorithm();
-		                
-		                boolean testFlow = (bg.getG().getGraphFlow() == bmfmc.getG().getGraphFlow());
-		                boolean testCost = (bg.getG().getGraphCost() == bmfmc.getG().getGraphCost());
+		            for (int i = 0; i < numTests; i++)
+		            {
+		                System.out.println("\navancement : " + (i+1) + "/"+numTests);
 
 
-		                if (!testFlow || !testCost) {
-		                    error++;
+		                double timeBasic = 0;
+		                double timeBusackerGowen = 0;
+
+		                for (int n = 7; n < numVertices; n++)
+		                {
+		                    System.out.print(".");
+		                    avancement = ((double) ((n - 7) * 100)) / (numVertices - 7);
+
+		                    //System.out.print("Test "+i+" - numV : "+numVertices+" - generating...");
+		                    builder = new RandomGraphBuilder();
+		                    builder.setNumVertices(n);
+		                    builder.setDensity(density);
+		                    builder.setCapacityLowerBound(minCapacity);
+		                    builder.setCapacityUpperBound(maxCapacity);
+		                    builder.setCostLowerBound(1);
+		                    builder.setCostUpperBound(5);
+
+		                    FlowCostGraph G2 = builder.generateRandomFlowGraph();
+
+		                    start = System.currentTimeMillis();
+		                    {
+
+		                        BusackerGowen bg = new BusackerGowen(G2);
+		                        bg.runAlgorithm();
+		                    }
+		                    time = System.currentTimeMillis() - start;
+
+		                    timeBusackerGowen += time;
+
+
+		                    FlowCostGraph G1 = builder.generateRandomFlowGraph();
+
+		                    //System.out.print("OK......basic...");
+
+		                    start = System.currentTimeMillis();
+		                    {
+		                        BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G1);
+		                        bmfmc.runAlgorithm();
+		                    }
+		                    time = System.currentTimeMillis() - start;
+
+		                    timeBasic += time;
+
+		                    if (i == 0)
+		                    {
+		                        basicResults.put(numVertices, timeBasic);
+		                        busackerGowenResults.put(numVertices, timeBusackerGowen);
+		                    } else
+		                    {
+		                        basicResults.put(numVertices, basicResults.get(numVertices) + timeBasic);
+		                        busackerGowenResults.put(numVertices, busackerGowenResults.get(numVertices) + timeBusackerGowen);
+		                    }
+
+
 		                }
-		        	}
-		        	JOptionPane.showMessageDialog(this,
-						       "Différences:"+error,
-						       "Comparaison", 
-						        JOptionPane.INFORMATION_MESSAGE);
+		                
+		                for (int n = 7; numVertices < numVertices; n++)
+		                {
+		                    basicResults.put(n, basicResults.get(n) / numTests);
+		                    busackerGowenResults.put(n, busackerGowenResults.get(n) / numTests);
+		                }
+
+		               
+		            }
+//		        	JOptionPane.showMessageDialog(this,
+//						       "Différences:"+error,
+//						       "Comparaison", 
+//						        JOptionPane.INFORMATION_MESSAGE);
 		        }
 			}
 			catch (NumberFormatException exception) {

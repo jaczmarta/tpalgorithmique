@@ -295,11 +295,11 @@ public class Main
              test.outputResults("basic01_.txt", "busacker01_.txt");
              
             
-             test.setDensity(0.4);
-             test.setMinCap(100000);
-             test.setMaxCap(1000000000);
-             test.runTest();
-             test.outputResults("basic02_.txt", "busacker02_.txt");
+//             test.setDensity(0.4);
+//             test.setMinCap(100000);
+//             test.setMaxCap(1000000000);
+//             test.runTest();
+//             test.outputResults("basic02_.txt", "busacker02_.txt");
         }
 
 
