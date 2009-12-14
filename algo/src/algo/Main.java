@@ -195,7 +195,7 @@ public class Main
 
         System.out.println("----------------------------- TEST DES DEUX ALGOS ---------------------------------");
         {
-            int nbTests = 1000;
+            int nbTests = 100;
             int cpt = 0;
             int faux = 0;
 
@@ -204,15 +204,11 @@ public class Main
             {
                 cpt++;
 
-                //System.out.print(cpt + "...");
-
-
-
                 RandomGraphBuilder builder = new RandomGraphBuilder();
-                builder.setNumVertices(30);
-                builder.setDensity(0.7);
-                builder.setCapacityLowerBound(2);
-                builder.setCapacityUpperBound(100);
+                builder.setNumVertices(50);
+                builder.setDensity(0.8);
+                builder.setCapacityLowerBound(100);
+                builder.setCapacityUpperBound(2000);
                 builder.setCostLowerBound(1);
                 builder.setCostUpperBound(10);
 
@@ -287,7 +283,7 @@ public class Main
              Test test = new Test();
              test.setNumVerticesFrom(7);
              test.setNumVerticesTo(50);
-             test.setNumTests(50);
+             test.setNumTests(10);
 
              
              test.setDensity(0.3);
@@ -295,18 +291,20 @@ public class Main
              test.runTest();
              test.outputResults("basic01.txt", "busacker01.txt");
 
+             
              test.setDensity(0.5);
              test.setMaxCap(100);
              test.runTest();
              test.outputResults("basic02.txt", "busacker02.txt");
+             
 
-             test.setDensity(0.7);
-             test.setMaxCap(10000);
+             test.setDensity(0.8);
+             test.setMaxCap(100000);
              test.runTest();
              test.outputResults("basic03.txt", "busacker03.txt");
         }
 
-            
+           
 
     }
 }

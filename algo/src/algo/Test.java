@@ -76,16 +76,26 @@ public class Test
                     builder.setCapacityUpperBound(maxCap);
                     builder.setCostLowerBound(1);
                     builder.setCostUpperBound(5);
-                    //builder.setCostLowerBound(RandomGraphBuilder.generateInteger(1, 20));
-                    //builder.setCostUpperBound(builder.getCostLowerBound() + RandomGraphBuilder.generateInteger(1, 30));
 
-                    FlowCostGraph G = builder.generateRandomFlowGraph();
+                    FlowCostGraph G2 = builder.generateRandomFlowGraph();
+
+                    start = System.currentTimeMillis();
+                    {
+                        BusackerGowen bg = new BusackerGowen(G2);
+                        bg.runAlgorithm();
+                    }
+                    time = System.currentTimeMillis() - start;
+
+                    timeBusackerGowen += time;
+                    
+                    
+                    FlowCostGraph G1 = builder.generateRandomFlowGraph();
 
                     //System.out.print("OK......basic...");
 
                     start = System.currentTimeMillis();
                     {
-                        BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
+                        BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G1);
                         bmfmc.runAlgorithm();
                     }
                     time = System.currentTimeMillis() - start;
@@ -94,14 +104,7 @@ public class Test
 
                     //System.out.print("OK......busacker...");
 
-                    start = System.currentTimeMillis();
-                    {
-                        BusackerGowen bg = new BusackerGowen(G);
-                        bg.runAlgorithm();
-                    }
-                    time = System.currentTimeMillis() - start;
-
-                    timeBusackerGowen += time;
+                    
 
                     //System.out.println("OK\n");
 

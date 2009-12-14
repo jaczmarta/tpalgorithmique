@@ -6,9 +6,12 @@ package algo;
 
 import graphs.FlowCostGraph;
 import graphs.OrientedValuedGraph;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import values.IValues;
+import values.IntValues;
 
 /**
  * algorithme de base pour chercher le flot max de cout min dans un graphe de flot avec des couts
@@ -33,13 +36,15 @@ public class BasicMaxFlowMinCost
         buildFlow();
         List<Integer> circuitWithNegativeCost = getCircuitWithNegativeCost();
 
+
         while (!circuitWithNegativeCost.isEmpty())
         {
+            checkCircuit(circuitWithNegativeCost);
             updateFLow(circuitWithNegativeCost);
-            circuitWithNegativeCost = getCircuitWithNegativeCost();
-        }
 
-        //G.checkFlow();
+            circuitWithNegativeCost = getCircuitWithNegativeCost();
+            
+        }
 
     }
 
@@ -58,11 +63,76 @@ public class BasicMaxFlowMinCost
      */
     private List<Integer> getCircuitWithNegativeCost()
     {
+
         Ge = G.getResultingNetworkWithCosts();
 
-        FloydWarshall fw = new FloydWarshall(Ge);
-        fw.runAlgorithm();
-        return fw.getCircuitWithNegativeCost();
+        boolean hasCircuit = false;  
+
+        int s = 0;
+        long[] L = new long[Ge.size()];
+        for (int i = 0; i < Ge.size(); i++)
+        {
+            if (i == s)
+            {
+                L[i] = 0;
+            } else
+            {
+                L[i] = IntValues.infinity;
+            }
+        }
+        hasCircuit = false;
+        int[] pred = new int[Ge.size()];
+
+        for (int x = 0; x < Ge.size(); x++)
+        {
+            for (int u = 0; u < Ge.size(); u++)
+            {
+                for (int v = 0; v < Ge.size(); v++)
+                {
+                    if (Ge.exists(u, v))
+                    {
+                        if (L[v] > L[u] + Ge.getValue(u, v))
+                        {
+                            L[v] = L[u] + Ge.getValue(u, v);
+                            pred[v] = u;
+                        }
+                    }
+                }
+            }
+        }
+        for (int u = 0; u < Ge.size(); u++)
+        {
+            for (int v = 0; v < Ge.size(); v++)
+            {
+                if (Ge.exists(u, v))
+                {
+                    if (L[v] > L[u] + Ge.getValue(u, v))
+                    {
+                        hasCircuit = true;
+
+                        List<Integer> pile = new ArrayList<Integer>();
+                        int k = v;
+                        while (!pile.contains(k))
+                        {
+                            pile.add(k);
+                            k = pred[k];
+                        }
+                        List<Integer> circuit = pile.subList(pile.indexOf(k), pile.size());
+                        Collections.reverse(circuit);
+                        return circuit;
+
+                    }
+                }
+            }
+        }
+
+        if (!hasCircuit)
+        {
+            return new ArrayList<Integer>();
+
+        }
+
+        return new ArrayList<Integer>();
 
     }
 
@@ -95,6 +165,28 @@ public class BasicMaxFlowMinCost
 
     }
 
+    private void checkCircuit(List<Integer> circuit)
+    {
+        int sum = 0;
+        for (int i = 0; i < circuit.size(); i++)
+        {
+            int a = circuit.get(i);
+            int b = circuit.get((i + 1) % circuit.size());
+
+            if (!Ge.exists(a, b))
+            {
+                System.err.println("arc n'existe pas");
+                break;
+            }
+            sum += Ge.getValue(a, b);
+
+        }
+        if (sum >= 0)
+        {
+            System.err.println("sum = " + sum);
+        }
+    }
+
     /**
      * calcule l'augmentation possible de flot pour un chemin augmentant
      */
@@ -102,7 +194,7 @@ public class BasicMaxFlowMinCost
     {
         int increase = 0;
         int increaseMax = IValues.infinity;
-        for (int k = 0; k < path.size()-1; k++)
+        for (int k = 0; k < path.size() - 1; k++)
         {
             int i = path.get(k);
             int j = path.get(k + 1);
@@ -115,7 +207,7 @@ public class BasicMaxFlowMinCost
                 increase = graph.getFlow(j, i);
             } else
             {
-                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ") ; path = "+path);
+                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ") ; path = " + path);
                 System.exit(-1);
             }
             increaseMax = Math.min(increaseMax, increase);
@@ -144,7 +236,7 @@ public class BasicMaxFlowMinCost
                 increase = graph.getFlow(j, i);
             } else
             {
-                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ") ; path = "+path);
+                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ") ; path = " + path);
                 System.exit(-1);
             }
             increaseMax = Math.min(increaseMax, increase);

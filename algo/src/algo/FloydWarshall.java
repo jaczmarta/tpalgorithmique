@@ -81,8 +81,15 @@ public class FloydWarshall
                     {
                         if (delta[k][i] != IValues.infinity)
                         {
-                            if (delta[j][i] != IValues.infinity)
-                            {
+                            if (delta[j][i] != IValues.infinity) {
+
+                                long deltajk = delta[j][k];
+                                long deltaki = delta[k][i];
+                                long sum = deltajk + deltaki;
+
+                                if ((sum < deltajk) && (sum < deltaki) && (deltajk > 0) && (deltaki > 0)) {
+                                    System.out.println("pb");
+                                }
 
                                 if ((delta[j][i] > (delta[j][k] + delta[k][i])))
                                 {
@@ -265,7 +272,7 @@ public class FloydWarshall
 
                     if (pile2.size() > 2)
                     { //ce if est moche
-                        //checkCircuit(pile2);
+                        checkCircuit(pile2);
                         return pile2;
                     } else
                     {
