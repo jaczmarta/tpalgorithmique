@@ -4,18 +4,35 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Random;
+import java.util.logging.Level;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartFrame;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYSplineRenderer;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 
 import algo.BasicMaxFlowMinCost;
 import algo.BusackerGowen;
@@ -81,6 +98,7 @@ public class GraphMainGUI extends Window {
 	
 	
 	public void init() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMenuBar();
 		
         GridBagConstraints grid = new GridBagConstraints();
@@ -228,113 +246,72 @@ public class GraphMainGUI extends Window {
 	            builder.setCapacityUpperBound(maxCapacity);
 		        builder.setCostLowerBound(minCost);
 		        builder.setCostUpperBound(maxCost);
-	            
-		        if (numGraphs < 5) {
-		        	for (int i = 0; i < numGraphs; i++) {
-		        		new FlowCostGraphWindow(builder.generateRandomFlowGraph());
-		        	}
-		        }
-		        else {
-//		            int error = 0;
-//		        	for (int i = 0; i < numTests; i++) {
-//		                FlowCostGraph G = builder.generateRandomFlowGraph();
-//
-//		                BusackerGowen bg = new BusackerGowen(G);
-//		                bg.runAlgorithm();
-//
-//		                BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
-//		                bmfmc.runAlgorithm();
-//		                
-//		                boolean testFlow = (bg.getG().getGraphFlow() == bmfmc.getG().getGraphFlow());
-//		                boolean testCost = (bg.getG().getGraphCost() == bmfmc.getG().getGraphCost());
-//
-//
-//		                if (!testFlow || !testCost) {
-//		                    error++;
-//		                }
-//		        	}
 		        	
-		        	long start;
-		            long time;
-		            double avancement = 0;
-		            HashMap<Integer, Double> basicResults = new HashMap<Integer, Double>();
-		            HashMap<Integer, Double> busackerGowenResults = new HashMap<Integer, Double>();
+	        	long start;
+	            long time;
+	            double avancement = 0;
+	            HashMap<Integer, Double> basicResults = new HashMap<Integer, Double>();
+	            HashMap<Integer, Double> busackerGowenResults = new HashMap<Integer, Double>();
 
-		            for (int i = 0; i < numTests; i++)
-		            {
-		                System.out.println("\navancement : " + (i+1) + "/"+numTests);
-
-
-		                double timeBasic = 0;
-		                double timeBusackerGowen = 0;
-
-		                for (int n = 7; n < numVertices; n++)
-		                {
-		                    System.out.print(".");
-		                    avancement = ((double) ((n - 7) * 100)) / (numVertices - 7);
-
-		                    //System.out.print("Test "+i+" - numV : "+numVertices+" - generating...");
-		                    builder = new RandomGraphBuilder();
-		                    builder.setNumVertices(n);
-		                    builder.setDensity(density);
-		                    builder.setCapacityLowerBound(minCapacity);
-		                    builder.setCapacityUpperBound(maxCapacity);
-		                    builder.setCostLowerBound(1);
-		                    builder.setCostUpperBound(5);
-
-		                    FlowCostGraph G2 = builder.generateRandomFlowGraph();
-
-		                    start = System.currentTimeMillis();
-		                    {
-
-		                        BusackerGowen bg = new BusackerGowen(G2);
-		                        bg.runAlgorithm();
-		                    }
-		                    time = System.currentTimeMillis() - start;
-
-		                    timeBusackerGowen += time;
+	            for (int i = 0; i < numTests; i++)
+	            {
+	                System.out.println("\navancement : " + (i+1) + "/"+numTests);
 
 
-		                    FlowCostGraph G1 = builder.generateRandomFlowGraph();
+	                double timeBasic = 0;
+	                double timeBusackerGowen = 0;
 
-		                    //System.out.print("OK......basic...");
+	                for (int n = 7; n < numVertices; n++)
+	                {
+	                    System.out.print(".");
+	                    avancement = ((double) ((n - 7) * 100)) / (numVertices - 7);
 
-		                    start = System.currentTimeMillis();
-		                    {
-		                        BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G1);
-		                        bmfmc.runAlgorithm();
-		                    }
-		                    time = System.currentTimeMillis() - start;
+	                    FlowCostGraph G2 = builder.generateRandomFlowGraph();
 
-		                    timeBasic += time;
+	                    start = System.currentTimeMillis();
+	                    {
 
-		                    if (i == 0)
-		                    {
-		                        basicResults.put(numVertices, timeBasic);
-		                        busackerGowenResults.put(numVertices, timeBusackerGowen);
-		                    } else
-		                    {
-		                        basicResults.put(numVertices, basicResults.get(numVertices) + timeBasic);
-		                        busackerGowenResults.put(numVertices, busackerGowenResults.get(numVertices) + timeBusackerGowen);
-		                    }
+	                        BusackerGowen bg = new BusackerGowen(G2);
+	                        bg.runAlgorithm();
+	                    }
+	                    time = System.currentTimeMillis() - start;
+
+	                    timeBusackerGowen += time;
 
 
-		                }
-		                
-		                for (int n = 7; numVertices < numVertices; n++)
-		                {
-		                    basicResults.put(n, basicResults.get(n) / numTests);
-		                    busackerGowenResults.put(n, busackerGowenResults.get(n) / numTests);
-		                }
+	                    FlowCostGraph G1 = builder.generateRandomFlowGraph();
 
-		               
-		            }
-//		        	JOptionPane.showMessageDialog(this,
-//						       "Différences:"+error,
-//						       "Comparaison", 
-//						        JOptionPane.INFORMATION_MESSAGE);
-		        }
-			}
+	                    start = System.currentTimeMillis();
+	                    {
+	                        BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G1);
+	                        bmfmc.runAlgorithm();
+	                    }
+	                    time = System.currentTimeMillis() - start;
+
+	                    timeBasic += time;
+
+	                    if (i == 0)
+	                    {
+	                        basicResults.put(n, timeBasic);
+	                        busackerGowenResults.put(n, timeBusackerGowen);
+	                    } else
+	                    {
+	                        basicResults.put(n, basicResults.get(n) + timeBasic);
+	                        busackerGowenResults.put(n, busackerGowenResults.get(n) + timeBusackerGowen);
+	                    }
+
+
+	                }
+	                for (int n = 7; n < numVertices; n++)
+	                {
+	                    basicResults.put(n, basicResults.get(n) / numTests);
+	                    busackerGowenResults.put(n, busackerGowenResults.get(n) / numTests);
+	                }
+	               
+	            }
+                displayGraphic(basicResults, busackerGowenResults);
+	        }
+		
 			catch (NumberFormatException exception) {
 				JOptionPane.showMessageDialog(this,
 					       "Tous les champs n'ont pas été remplis correctement.",
@@ -347,6 +324,41 @@ public class GraphMainGUI extends Window {
 		}
     }
 
+	public void displayGraphic(HashMap<Integer, Double> basic, HashMap<Integer, Double> bugow) {
+
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		
+        XYSeries xy1 = new XYSeries("Basic");
+        XYSeries xy2 = new XYSeries("Busacker & Gowen");
+        
+	    for (int n = 7; n < numVertices; n++)
+        {
+	    	xy1.add(n, basic.get(n));
+	    	xy2.add(n, bugow.get(n));
+        }
+
+        dataset.addSeries(xy1);
+        dataset.addSeries(xy2);
+	    
+	    JFreeChart chart = ChartFactory.createXYLineChart(
+	    		"Graphe ",
+	    		"Nombre de sommets",
+	    		"Temps (en secondes)",
+	    		dataset,
+	    		PlotOrientation.VERTICAL,
+	    		true,
+	    		true,
+	    		false
+	         	);
+	    
+	    chart.getXYPlot().setRenderer(new XYSplineRenderer());
+	    
+		ChartFrame frame = new ChartFrame("Graphique", chart);
+		frame.setVisible(true);
+		frame.pack();
+		
+	}
+	
 	public void capacitySelection(GridBagConstraints grid) {
 		{
         	minCapacityLabel = new JLabel();    
