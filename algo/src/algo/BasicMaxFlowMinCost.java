@@ -4,14 +4,16 @@
  */
 package algo;
 
+
 import graphs.FlowCostGraph;
 import graphs.OrientedValuedGraph;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import values.IValues;
-import values.IntValues;
+
 
 /**
  * algorithme de base pour chercher le flot max de cout min dans un graphe de flot avec des couts
@@ -79,7 +81,7 @@ public class BasicMaxFlowMinCost
                 L[i] = 0;
             } else
             {
-                L[i] = IntValues.infinity;
+                L[i] = IValues.infinity;
             }
         }
         hasCircuit = false;

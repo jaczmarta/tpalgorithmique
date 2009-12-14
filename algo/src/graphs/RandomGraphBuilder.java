@@ -102,7 +102,7 @@ public class RandomGraphBuilder
 
             do
             {                
-                j = generateInteger(1, G.indexOfSink() - 1);
+                j = generateInteger(1, G.indexOfSink());
             } while ((j == i) || (G.gammaPlus(j).isEmpty() && (j != G.indexOfSink())));
 
             List<Integer> randomPath = generateRandomPath(G, i, j);
