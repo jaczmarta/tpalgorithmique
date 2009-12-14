@@ -207,8 +207,8 @@ public class Main
                 RandomGraphBuilder builder = new RandomGraphBuilder();
                 builder.setNumVertices(50);
                 builder.setDensity(0.8);
-                builder.setCapacityLowerBound(100);
-                builder.setCapacityUpperBound(2000);
+                builder.setCapacityLowerBound(10);
+                builder.setCapacityUpperBound(20);
                 builder.setCostLowerBound(1);
                 builder.setCostUpperBound(10);
 
@@ -216,14 +216,15 @@ public class Main
 
                 //System.out.print("generated...");
 
+                BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
+                bmfmc.runAlgorithm();
 
                 BusackerGowen bg = new BusackerGowen(G);
                 bg.runAlgorithm();
 
                 //System.out.print("Busacker...");
 
-                BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
-                bmfmc.runAlgorithm();
+                
 
                 //System.out.print("Gowen...");
 
@@ -235,6 +236,7 @@ public class Main
                 if (!testFlot || !testCout)
                 {
                     faux++;
+                    System.out.println(bg.getG().getGraphCost()+" - "+bmfmc.getG().getGraphCost());
                     //System.out.println("NOTok");
                 } else {
                     //System.out.println("ok");
@@ -282,7 +284,7 @@ public class Main
 
              Test test = new Test();
              test.setNumVerticesFrom(7);
-             test.setNumVerticesTo(50);
+             test.setNumVerticesTo(100);
              test.setNumTests(10);
 
              
@@ -290,21 +292,14 @@ public class Main
              test.setMaxCap(5);
              test.runTest();
              test.outputResults("basic01.txt", "busacker01.txt");
-
              
-             test.setDensity(0.5);
-             test.setMaxCap(100);
+            
+             test.setDensity(0.8);
+             test.setMaxCap(1000000000);
              test.runTest();
              test.outputResults("basic02.txt", "busacker02.txt");
-             
-
-             test.setDensity(0.8);
-             test.setMaxCap(100000);
-             test.runTest();
-             test.outputResults("basic03.txt", "busacker03.txt");
         }
 
-           
 
     }
 }

@@ -5,12 +5,14 @@
 package algo;
 
 import graphs.FlowCostGraph;
+import graphs.OrientedValuedGraph;
 import java.util.List;
 
 import values.IValues;
 
 /**
  * Classe implémentant l'algorithme de Ford Fulkerson cherchant un flot max dans un graphe.
+ * utilise en fait l'algorithme d'edmond-Karp
  * @author Rémi
  */
 public class FordFulkerson
@@ -37,20 +39,53 @@ public class FordFulkerson
 
         initFlow();
         List<Integer> betterChain;
+        int cpt = 0;
 
         do
         {
-            betterChain = G.getResultingNetwork().getShortestPath(G.indexOfSource(), G.indexOfSink());
+            betterChain = getBetterChainWithEdmondKarp();//G.getResultingNetwork().getShortestPath(G.indexOfSource(), G.indexOfSink());
             if (!betterChain.isEmpty())
             {
-                int delta = BasicMaxFlowMinCost.getPossibleIncrease(G, betterChain);
+                cpt++;
+                int delta = getPossibleIncrease(G, betterChain);
                 updateFlow(betterChain, delta);
 
             }
         } while (!betterChain.isEmpty());
 
+        //System.out.println("cpt = "+cpt);
+
 
         return this.G;
+    }
+
+    /**
+     * calcule l'augmentation possible de flot pour un chemin augmentant
+     */
+    public static int getPossibleIncrease(FlowCostGraph graph, List<Integer> path)
+    {
+        int increase = 0;
+        int increaseMax = IValues.infinity;
+        for (int k = 0; k < path.size() - 1; k++)
+        {
+            int i = path.get(k);
+            int j = path.get(k + 1);
+
+            if (graph.exists(i, j))
+            {
+                increase = graph.getCapacity(i, j) - graph.getFlow(i, j);
+            } else if (graph.exists(j, i))
+            {
+                increase = graph.getFlow(j, i);
+            } else
+            {
+                System.err.println("BasicMaxFlowMinCost::getPossibleAugmentation : invalid edge (" + i + ", " + j + ") ; path = " + path);
+                System.exit(-1);
+            }
+            increaseMax = Math.min(increaseMax, increase);
+
+        }
+        return increaseMax;
     }
 
     /**
@@ -105,6 +140,45 @@ public class FordFulkerson
                 System.exit(-1);
             }
         }
+
+    }
+
+    private List<Integer> getBetterChainWithEdmondKarp()
+    {
+        /**
+         * selon l'algo d'edmond-karp, la meilleure chaine est un chemin de s à t le plus
+         * court possible mais en nombre d'arcs. On construit donc le graphe d'écart
+         * avec des 1 comme valuation, et on lance bellman
+         */
+        OrientedValuedGraph Ge = new OrientedValuedGraph(G.size());
+
+        for (int i = 0; i < G.size(); i++)
+        {
+            for (int j = 0; j < G.size(); j++)
+            {
+
+                if (G.exists(i, j))
+                {
+
+                    long xij = G.getFlow(i, j);
+                    long cij = G.getCapacity(i, j);
+
+                    if (xij < cij)
+                    {
+                        Ge.setValue(i, j, 1);
+                    }
+
+                    if (xij > 0)
+                    {
+                        Ge.setValue(j, i, 1);
+                    }
+                }
+            }
+        }
+
+        BellmanFord bf = new BellmanFord(G.indexOfSource(), Ge);
+        bf.runAlgorithm();
+        return bf.getPath(G.indexOfSink());
 
     }
 }
