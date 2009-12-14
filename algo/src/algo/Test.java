@@ -29,6 +29,7 @@ public class Test
     private int numTests;
     private HashMap<Integer, Double> basicResults;
     private HashMap<Integer, Double> busackerGowenResults;
+    private int minCap;
 
     /**
      * constructeur par défaut
@@ -55,24 +56,27 @@ public class Test
 
             long start;
             long time;
+            double avancement = 0;
+            ;
 
-            for (int numVertices = numVerticesFrom; numVertices < numVerticesTo; numVertices++)
+            for (int i = 0; i < numTests; i++)
             {
-                double avancement = ((double) ((numVertices - numVerticesFrom) * 100)) / (numVerticesTo - numVerticesFrom);
-                System.out.println("avancement : " + Math.round(avancement) + "%" + " (numVertice = " + numVertices + ")");
-
+                System.out.println("\navancement : " + (i+1) + "/"+numTests);
 
 
                 double timeBasic = 0;
                 double timeBusackerGowen = 0;
 
-                for (int i = 0; i < numTests; i++)
+                for (int numVertices = numVerticesFrom; numVertices < numVerticesTo; numVertices++)
                 {
+                    System.out.print(".");
+                    avancement = ((double) ((numVertices - numVerticesFrom) * 100)) / (numVerticesTo - numVerticesFrom);
+
                     //System.out.print("Test "+i+" - numV : "+numVertices+" - generating...");
                     RandomGraphBuilder builder = new RandomGraphBuilder();
                     builder.setNumVertices(numVertices);
                     builder.setDensity(density);
-                    builder.setCapacityLowerBound(1);
+                    builder.setCapacityLowerBound(minCap);
                     builder.setCapacityUpperBound(maxCap);
                     builder.setCostLowerBound(1);
                     builder.setCostUpperBound(5);
@@ -103,19 +107,26 @@ public class Test
 
                     timeBasic += time;
 
-                    //System.out.print("OK......busacker...");
+                    if (i == 0)
+                    {
+                        basicResults.put(numVertices, timeBasic);
+                        busackerGowenResults.put(numVertices, timeBusackerGowen);
+                    } else
+                    {
+                        basicResults.put(numVertices, basicResults.get(numVertices) + timeBasic);
+                        busackerGowenResults.put(numVertices, busackerGowenResults.get(numVertices) + timeBusackerGowen);
+                    }
 
-
-
-                    //System.out.println("OK\n");
 
                 }
+                
+                for (int numVertices = numVerticesFrom; numVertices < numVerticesTo; numVertices++)
+                {
+                    basicResults.put(numVertices, basicResults.get(numVertices) / numTests);
+                    busackerGowenResults.put(numVertices, busackerGowenResults.get(numVertices) / numTests);
+                }
 
-                timeBasic /= numTests;
-                timeBusackerGowen /= numTests;
-
-                basicResults.put(numVertices, timeBasic);
-                busackerGowenResults.put(numVertices, timeBusackerGowen);
+               
             }
 
             fwLog.close();
@@ -236,5 +247,10 @@ public class Test
     public void setNumTests(int numTests)
     {
         this.numTests = numTests;
+    }
+
+    void setMinCap(int i)
+    {
+        this.minCap = i;
     }
 }

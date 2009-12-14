@@ -71,7 +71,6 @@ public class RandomGraphBuilder
             if ((oldEdgesCounter == edgesCounter) && (edgesCounter != 0)) {
                 cpt++;
                 if (cpt > getNumEdges()) {
-                    System.out.println("echec");
                     return generateRandomFlowGraph();
                 }
             } else {
