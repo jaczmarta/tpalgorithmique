@@ -11,7 +11,7 @@ import java.io.IOException;
 public class Application {
 	
 	public static void main(String[] args) throws IOException {
-		GraphMainGUI gui = new GraphMainGUI();
+		MainGUI gui = new MainGUI();
 		gui.setVisible(true);
 	}
 

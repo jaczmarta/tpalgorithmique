@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JFrame;
 
 public class Window extends JFrame implements ActionListener {
@@ -40,8 +41,7 @@ public class Window extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent arg0) {		
-	}
-			
+	}			
 }
 
 

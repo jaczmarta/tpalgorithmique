@@ -191,7 +191,7 @@ public class Main
 
         }
 
-         *//*
+         */
 
         System.out.println("----------------------------- TEST DES DEUX ALGOS ---------------------------------");
         {
@@ -247,7 +247,7 @@ public class Main
 
             System.out.println("faux: " + faux);
         }
-        *//*
+        /*
         System.out.println("----------------------------- PARTIE PRATIQUE ---------------------------------");
         {
         FlowCostGraph fg = new FlowCostGraph(6);
@@ -279,20 +279,20 @@ public class Main
         }
 
          */
-         System.out.println("----------------------------- TESTS ---------------------------------");
-        {
-
-             Test test = new Test();
-             test.setNumVerticesFrom(7);
-             test.setNumVerticesTo(100);
-             test.setNumTests(10);
-
-             
-             test.setDensity(0.4);
-             test.setMinCap(1);
-             test.setMaxCap(5);
-             test.runTest();
-             test.outputResults("basic01_.txt", "busacker01_.txt");
+//         System.out.println("----------------------------- TESTS ---------------------------------");
+//        {
+//
+//             Test test = new Test();
+//             test.setNumVerticesFrom(7);
+//             test.setNumVerticesTo(100);
+//             test.setNumTests(10);
+//
+//             
+//             test.setDensity(0.4);
+//             test.setMinCap(1);
+//             test.setMaxCap(5);
+//             test.runTest();
+//             test.outputResults("basic01_.txt", "busacker01_.txt");
              
             
 //             test.setDensity(0.4);
@@ -300,7 +300,7 @@ public class Main
 //             test.setMaxCap(1000000000);
 //             test.runTest();
 //             test.outputResults("basic02_.txt", "busacker02_.txt");
-        }
+//        }
 
 
     }
