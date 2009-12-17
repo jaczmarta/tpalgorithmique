@@ -77,10 +77,7 @@ public class RandomGraphBuilder
                 cpt = 0;
             }
 
-
-
             oldEdgesCounter = edgesCounter;
-
 
             if (G.exists(G.indexOfSource(), G.indexOfSink()))
             {

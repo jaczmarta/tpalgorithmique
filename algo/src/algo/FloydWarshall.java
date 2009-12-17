@@ -1,10 +1,7 @@
 package algo;
 
-import java.util.List;
 import values.IValues;
 import graphs.OrientedValuedGraph;
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * algorithme de Floyd Warshall calculant les plus courts chemins entre toutes les paires de sommets
@@ -218,120 +215,8 @@ public class FloydWarshall
         }
     }
 
-    /**
-     * retourne le minimum entre a et b+c
-     * en prenant en compte les cas où b ou c = infini ( infini-x = infini )
-     * @param a
-     * @param b
-     * @param c
-     * @return min (a, b+c)
-     */
-    private int min(int a, int b, int c)
-    {
-        return (a < b + c ? a : b + c);
-    }
-
-    /**
-     * cherche la présence d'un circuit absorbant dans le graphe
-     * @return la liste des sommets représentant un circuit absorbant, une liste vide si le
-     * graphe n'admet pas de circuit absorbant
-     */
-    public List<Integer> getCircuitWithNegativeCost()
-    {
-        if (this.hasAbsorbingCircuit())
-        {
-            for (int i = 0; i < delta.length; i++)
-            {
-                int memi = i;
-
-                //circuit absorbant <=> il existe i tel que delta[i][i] < 0 (ou P[i][i] != i)
-                if (delta[i][i] < 0)
-                {
-                    /* A COMMENTER */
-                    List<Integer> pile1 = new ArrayList<Integer>();
-                    List<Integer> pile2 = new ArrayList<Integer>();
-
-                    int k = i;
-
-                    pile1.add(k);
-                    k = P[k][k];
-
-                    while (!pile2.contains(k))
-                    {
-
-                        if (pile1.contains(k))
-                        {
-                            pile2.add(k);
-                        }
-                        pile1.add(k);
-
-                        k = P[i][k];
-                    }
-
-                    Collections.reverse(pile2);
-
-                    if (pile2.size() > 2)
-                    { //ce if est moche
-                        checkCircuit(pile2);
-                        return pile2;
-                    } else
-                    {
-                        //System.out.println("");
-                        //i = memi;
-                    }
-                }
-            }
-        }
-        return new ArrayList<Integer>();
-
-    }
-
-    private void checkCircuit(List<Integer> circuit)
-    {
-        int sum = 0;
-        for (int i = 0; i < circuit.size(); i++)
-        {
-            int a = circuit.get(i);
-            int b = circuit.get((i + 1) % circuit.size());
-
-            if (!G.exists(a, b))
-            {
-                System.err.println("arc n'existe pas");
-                break;
-            }
-            sum += G.getValue(a, b);
-
-        }
-        if (sum >= 0)
-        {
-            System.err.println("sum = " + sum);
-        }
-    }
-
     public boolean hasAbsorbingCircuit()
     {
         return absorbingCircuit;
-    }
-
-    private int plus(int x, int y)
-    {
-        if ((x == IValues.infinity) || (y == IValues.infinity))
-        {
-            return IValues.infinity;
-        } else
-        {
-            return x + y;
-        }
-    }
-
-    private boolean superieur(int x, int y)
-    {
-        if (y == IValues.infinity)
-        {
-            return false;
-        } else
-        {
-            return (x > y);
-        }
     }
 }

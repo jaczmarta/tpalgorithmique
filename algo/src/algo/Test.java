@@ -56,8 +56,8 @@ public class Test
 
             long start;
             long time;
-            double avancement = 0;
-            ;
+            //double avancement = 0;
+            
 
             for (int i = 0; i < numTests; i++)
             {
@@ -70,7 +70,7 @@ public class Test
                 for (int numVertices = numVerticesFrom; numVertices < numVerticesTo; numVertices++)
                 {
                     System.out.print(".");
-                    avancement = ((double) ((numVertices - numVerticesFrom) * 100)) / (numVerticesTo - numVerticesFrom);
+                    //avancement = ((double) ((numVertices - numVerticesFrom) * 100)) / (numVerticesTo - numVerticesFrom);
 
                     //System.out.print("Test "+i+" - numV : "+numVertices+" - generating...");
                     RandomGraphBuilder builder = new RandomGraphBuilder();
@@ -81,12 +81,12 @@ public class Test
                     builder.setCostLowerBound(1);
                     builder.setCostUpperBound(5);
 
-                    FlowCostGraph G2 = builder.generateRandomFlowGraph();
+                    FlowCostGraph G = builder.generateRandomFlowGraph();
 
                     start = System.currentTimeMillis();
                     {
 
-                        BusackerGowen bg = new BusackerGowen(G2);
+                        BusackerGowen bg = new BusackerGowen(G);
                         bg.runAlgorithm();
                     }
                     time = System.currentTimeMillis() - start;
@@ -94,13 +94,13 @@ public class Test
                     timeBusackerGowen += time;
 
 
-                    FlowCostGraph G1 = builder.generateRandomFlowGraph();
+                   // FlowCostGraph G1 = builder.generateRandomFlowGraph();
 
                     //System.out.print("OK......basic...");
 
                     start = System.currentTimeMillis();
                     {
-                        BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G1);
+                        BasicMaxFlowMinCost bmfmc = new BasicMaxFlowMinCost(G);
                         bmfmc.runAlgorithm();
                     }
                     time = System.currentTimeMillis() - start;
