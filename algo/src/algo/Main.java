@@ -195,7 +195,7 @@ public class Main
 
         System.out.println("----------------------------- TEST DES DEUX ALGOS ---------------------------------");
         {
-            int nbTests = 100;
+            int nbTests = 1000;
             int cpt = 0;
             int faux = 0;
 
@@ -205,12 +205,12 @@ public class Main
                 cpt++;
 
                 RandomGraphBuilder builder = new RandomGraphBuilder();
-                builder.setNumVertices(50);
-                builder.setDensity(0.8);
-                builder.setCapacityLowerBound(10);
-                builder.setCapacityUpperBound(20);
+                builder.setNumVertices(10);
+                builder.setDensity(0.5);
+                builder.setCapacityLowerBound(1);
+                builder.setCapacityUpperBound(50);
                 builder.setCostLowerBound(1);
-                builder.setCostUpperBound(10);
+                builder.setCostUpperBound(5);
 
                 FlowCostGraph G = builder.generateRandomFlowGraph();
 

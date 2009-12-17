@@ -78,10 +78,10 @@ public class MainGUI extends Window {
 			System.exit(1);
 		}
 		else if (source == generateGraphButton) {
-	        new GraphGUI();
+	        new GraphGeneratorGUI();
 		}
 		else if (source == testTheMethodsButton) {
-	        new TestGUI();
+	        new TestGeneratorGUI();
 		}
     }
 }

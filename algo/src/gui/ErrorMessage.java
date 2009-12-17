@@ -3,9 +3,10 @@ package gui;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-public class ErrorMessage extends Window {
+public class ErrorMessage extends JFrame {
 	
 	/**
 	 * 
@@ -32,6 +33,14 @@ public class ErrorMessage extends Window {
 				    "Details",
 				    JOptionPane.WARNING_MESSAGE);
 		}
+		return;
+	}
+	
+	public ErrorMessage(String message) {
+		JOptionPane.showMessageDialog(this,
+		    "Erreur:\n" + message,
+		    "Erreur",
+		    JOptionPane.WARNING_MESSAGE);
 		return;
 	}
 

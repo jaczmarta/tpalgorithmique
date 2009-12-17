@@ -7,6 +7,7 @@ import graphs.RandomGraphBuilder;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -18,100 +19,80 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
-public class GraphGUI extends Window {
+public class GraphGeneratorGUI extends Window {
 	private static final long serialVersionUID = 1L;
 
 	JMenuBar menuBar;
 		JMenu fileMenu;
 			JMenuItem openMenuItem;
 			JMenuItem quitMenuItem;
-			
-	StringBuffer choices;
 		
-	int numVertices = 10;
+	int numVertices;
 	JTextField numVerticesEntry;
 	JLabel verticesLabel;
-	
-	int numEdges;
 
-	double density = 0.5;
+	double density;
 	JTextField densityEntry;
 	JLabel densityLabel;
 	
-	int minCost = 1;
+	int minCost;
 	JTextField minCostEntry;
 	JLabel minCostLabel;
 
-	int maxCost = 5;
+	int maxCost;
 	JTextField maxCostEntry;
 	JLabel maxCostLabel;
 	
-	int minCapacity = 1;
+	int minCapacity;
 	JTextField minCapacityEntry;
 	JLabel minCapacityLabel;
 
-	int maxCapacity = 5;
+	int maxCapacity;
 	JTextField maxCapacityEntry;
 	JLabel maxCapacityLabel;
 		
 	JButton createGraphButton;
-    
-	public GraphGUI() {
+    JPanel cutomizationPane;
+	JSplitPane launchPane;
+	
+	public GraphGeneratorGUI() {
         super("Générateur de graphe");
         init();
+        setLocation(new Point(200, 200));
 		setVisible(true);
 		pack();
 	}
-	
-	
+		
 	public void init() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setMenuBar();
+		initLaunchPane();       
+	}
+	
+	public void initLaunchPane() {
 		
-        GridBagConstraints grid = new GridBagConstraints();
+		GridBagConstraints grid = new GridBagConstraints();
         getContentPane().setLayout(new GridBagLayout());        
         grid.insets = new Insets(5,5,5,5);  //top padding
                
-        {
-	        verticesLabel = new JLabel();    
-	        verticesLabel.setText("Nombre de sommets:");
-			grid.gridx = 0;
-			grid.gridy = 0;
-			getContentPane().add(verticesLabel, grid);
-	
-			numVerticesEntry = new JTextField("", 5);     
-			grid.gridx = 1;
-			grid.gridy = 0;
-			getContentPane().add(numVerticesEntry, grid);      
-        }
+        cutomizationPane = new JPanel();
+		cutomizationPane.setLayout(new GridBagLayout());
         
-        {
-        	densityLabel = new JLabel();    
-        	densityLabel.setText("Densité:");
-			grid.gridx = 0;
-			grid.gridy = 1;
-			getContentPane().add(densityLabel, grid);
-	
-			densityEntry = new JTextField("", 5);     
-			grid.gridx = 1;
-			grid.gridy = 1;
-			getContentPane().add(densityEntry, grid);
-        }
-        
-        costSelection(grid);
-        capacitySelection(grid);
+        initVerticesSelection	(cutomizationPane, grid);
+        initDensitySelection	(cutomizationPane, grid);
+        initCostSelection		(cutomizationPane, grid);
+        initCapacitySelection	(cutomizationPane, grid);
         
         {
         	createGraphButton = new JButton("Générer !");
-			grid.gridx = 3; 
-			grid.gridy = 9; 
-			getContentPane().add(createGraphButton, grid);
 			createGraphButton.addActionListener(this);
         }
-        
+		launchPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, cutomizationPane, createGraphButton);
+        this.add(launchPane);
 	}
 	
 	public void setMenuBar() {
@@ -159,9 +140,12 @@ public class GraphGUI extends Window {
 							graph.deserialize(fileName);
 							new FlowCostGraphWindow(graph);
 						}
+						else {
+							new ErrorMessage("Format non reconnu.");
+						}
 					}
 					catch (IOException erreur) {
-						System.out.println(erreur.getMessage());
+						new ErrorMessage(erreur.getMessage());
 					}
 				}
 			} 
@@ -180,43 +164,53 @@ public class GraphGUI extends Window {
 				minCapacity 	= Integer.parseInt(minCapacityEntry.getText());
 				maxCapacity 	= Integer.parseInt(maxCapacityEntry.getText());
 				
-	            builder.setNumVertices(numVertices);
-	            builder.setDensity(density);
-	            builder.setCapacityLowerBound(minCapacity);
-	            builder.setCapacityUpperBound(maxCapacity);
-		        builder.setCostLowerBound(minCost);
-		        builder.setCostUpperBound(maxCost);
+		        boolean checkDensity = (density <= 1) && (density > 0);
+		        boolean checkCapacity = minCapacity <= maxCapacity;
+		        boolean checkCost = minCost <= maxCost;
+		        
+		        if (!checkDensity) {
+	        		new ErrorMessage("Veuillez entrer une densité comprise entre 0 et 1.");
+	        	}
+	        	else if (!checkCapacity) {
+	        		new ErrorMessage("Veuillez vérifier les capacités.");
+	        	}
+	        	else if (!checkCost) {
+	        		new ErrorMessage("Veuillez vérifier les coûts.");
+	        	}
+		        else {
+		            builder.setNumVertices(numVertices);
+		            builder.setDensity(density);
+		            builder.setCapacityLowerBound(minCapacity);
+		            builder.setCapacityUpperBound(maxCapacity);
+			        builder.setCostLowerBound(minCost);
+			        builder.setCostUpperBound(maxCost);
 
-                FlowCostGraph G = builder.generateRandomFlowGraph();
-
-                new FlowCostGraphWindow(G);
-        
-	        
+	                FlowCostGraph G = builder.generateRandomFlowGraph();
+		        	new FlowCostGraphWindow(G);
+		        }
+                
 			}
             catch (NumberFormatException exception) {
-                    JOptionPane.showMessageDialog(this,
-                                   "Tous les champs n'ont pas été remplis correctement.",
-                                   "Warning", 
-                                    JOptionPane.WARNING_MESSAGE);
+				new ErrorMessage("Tous les champs n'ont pas été remplis correctement.");
             }
             catch (Exception e) {
-                    new ErrorMessage(e);
+                new ErrorMessage(e);
             }
 		}
     }
 	
-	public void capacitySelection(GridBagConstraints grid) {
+	public void initCapacitySelection(JPanel cutomizationPane, GridBagConstraints grid) {
 		{
         	minCapacityLabel = new JLabel();    
         	minCapacityLabel.setText("Capacité mimum:");
 			grid.gridx = 0;
 			grid.gridy = 6;
-			getContentPane().add(minCapacityLabel, grid);
+			cutomizationPane.add(minCapacityLabel, grid);
 	
 			minCapacityEntry = new JTextField("", 5);    
 			grid.gridx = 1;
 			grid.gridy = 6;
-			getContentPane().add(minCapacityEntry, grid);
+			cutomizationPane.add(minCapacityEntry, grid);
         }
         
         {
@@ -224,29 +218,29 @@ public class GraphGUI extends Window {
         	maxCapacityLabel.setText("Capacité maximum:");
 			grid.gridx = 0;
 			grid.gridy = 7;
-			getContentPane().add(maxCapacityLabel, grid);
+			cutomizationPane.add(maxCapacityLabel, grid);
 	
 			maxCapacityEntry = new JTextField("", 5);   
 			grid.gridx = 1;
 			grid.gridy = 7;
 			grid.insets = new Insets(5,5,5,5);
-			getContentPane().add(maxCapacityEntry, grid);
+			cutomizationPane.add(maxCapacityEntry, grid);
         }
 	}
 	
 	
-	public void costSelection(GridBagConstraints grid) {
+	public void initCostSelection(JPanel cutomizationPane, GridBagConstraints grid) {
 		{
         	minCostLabel = new JLabel();    
         	minCostLabel.setText("Cout minimum:");
 			grid.gridx = 0;
 			grid.gridy = 4;
-			getContentPane().add(minCostLabel, grid);
+			cutomizationPane.add(minCostLabel, grid);
 	
 			minCostEntry = new JTextField("", 5);     
 			grid.gridx = 1;
 			grid.gridy = 4;
-			getContentPane().add(minCostEntry, grid);
+			cutomizationPane.add(minCostEntry, grid);
         }
         
         {
@@ -254,14 +248,40 @@ public class GraphGUI extends Window {
         	maxCostLabel.setText("Cout maximum:");
 			grid.gridx = 0;
 			grid.gridy = 5;
-			getContentPane().add(maxCostLabel, grid);
+			cutomizationPane.add(maxCostLabel, grid);
 	
 			maxCostEntry = new JTextField("", 5);     
 			grid.gridx = 1;
 			grid.gridy = 5;
 			grid.insets = new Insets(5,5,5,5);
-			getContentPane().add(maxCostEntry, grid);
+			cutomizationPane.add(maxCostEntry, grid);
         }   
 		
 	}
+	
+	public void initVerticesSelection(JPanel cutomizationPane, GridBagConstraints grid) {
+        verticesLabel = new JLabel();    
+        verticesLabel.setText("Nombre de sommets:");
+		grid.gridx = 0;
+		grid.gridy = 0;
+		cutomizationPane.add(verticesLabel, grid);
+
+		numVerticesEntry = new JTextField("", 5);     
+		grid.gridx = 1;
+		grid.gridy = 0;
+		cutomizationPane.add(numVerticesEntry, grid);      
+    }
+    
+	public void initDensitySelection(JPanel cutomizationPane, GridBagConstraints grid) {
+    	densityLabel = new JLabel();    
+    	densityLabel.setText("Densité:");
+		grid.gridx = 0;
+		grid.gridy = 1;
+		cutomizationPane.add(densityLabel, grid);
+
+		densityEntry = new JTextField("", 5);     
+		grid.gridx = 1;
+		grid.gridy = 1;
+		cutomizationPane.add(densityEntry, grid);
+    }
 }

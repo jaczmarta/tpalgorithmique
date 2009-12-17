@@ -71,15 +71,15 @@ public class BasicMaxFlowMinCost
         Ge = G.getResultingNetworkWithCosts();
 
         boolean hasCircuit = false;
-
-        int s = 0;
         long[] L = new long[Ge.size()];
+        
         for (int i = 0; i < Ge.size(); i++)
         {
-            if (i == s)
-            {
-                L[i] = 0;
-            } else
+        	if (i == 0)
+        	{
+        		L[i] = 0;
+        	}
+        	else
             {
                 L[i] = IValues.infinity;
             }
@@ -175,7 +175,7 @@ public class BasicMaxFlowMinCost
         }
 
     }
-
+/*
     private void checkCircuit(List<Integer> circuit)
     {
         int sum = 0;
@@ -197,7 +197,7 @@ public class BasicMaxFlowMinCost
             System.err.println("sum = " + sum);
         }
     }
-
+*/
     /**
      * calcule l'augmentation possible de flot pour un chemin augmentant
      */

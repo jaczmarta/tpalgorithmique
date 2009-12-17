@@ -99,11 +99,11 @@ public abstract class AbstractGraphWindow extends Window {
 	public void setMenus(Container pane) {		
 		menuBar = new JMenuBar();
 
-		fileMenu 	= new JMenu("Fichier");
+		fileMenu = new JMenu("Fichier");
 		
-		saveMenuItem			= new JMenuItem("Enregistrer sous...");
-		openMenuItem			= new JMenuItem("Ouvrir un graphe");
-		quitMenuItem			= new JMenuItem("Quitter");
+		saveMenuItem = new JMenuItem("Enregistrer sous...");
+		openMenuItem = new JMenuItem("Ouvrir un graphe");
+		quitMenuItem = new JMenuItem("Quitter");
 
 		fileMenu.add(saveMenuItem);
 		fileMenu.add(openMenuItem);
@@ -113,9 +113,9 @@ public abstract class AbstractGraphWindow extends Window {
 		
 		menuBar	.add(fileMenu);
 
-		saveMenuItem			.addActionListener(this);
-		openMenuItem			.addActionListener(this);
-		quitMenuItem			.addActionListener(this);
+		saveMenuItem.addActionListener(this);
+		openMenuItem.addActionListener(this);
+		quitMenuItem.addActionListener(this);
 
 		menuBar	.setVisible(true);
 		setJMenuBar(menuBar);
